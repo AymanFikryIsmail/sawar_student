@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="10dp"
+    android:orientation="horizontal"
+    android:paddingTop="12dp"
+    >
+
+
+    <TextView
+        android:id="@+id/papername"
+        android:layout_width="118dp"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:gravity="center"
+        android:text="name  :"
+        android:textColor="@color/textcolor2"
+        android:textSize="12sp"
+
+        />
+
+
+    <ImageView
+        android:id="@+id/minuscopy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:paddingEnd="15dp"
+        android:padding="8dp"
+        android:src="@drawable/icon_keyboard_arrow_down_two_toned"
+        android:layout_toEndOf="@+id/papername"
+
+        />
+
+    <TextView
+        android:id="@+id/papercopy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/minuscopy"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="0 "
+
+        android:textColor="@color/textcolor2"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/addcopy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="30dp"
+        android:layout_toEndOf="@+id/papercopy"
+        android:padding="8dp"
+        android:layout_centerVertical="true"
+
+        android:src="@drawable/icon_keyboard_arrow_up_sharp" />
+
+    <TextView
+        android:id="@+id/paperprice"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:paddingEnd="25dp"
+
+        android:layout_toStartOf="@+id/removecart"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="price  : aa"
+        android:textColor="@color/textcolor2"
+        android:textSize="12sp" />
+
+    <Button
+        android:id="@+id/removecart"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:background="@drawable/custom_third_button"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:text="remove"
+        android:textColor="@color/white"
+        android:textSize="14sp"
+
+        />
+
+</RelativeLayout>

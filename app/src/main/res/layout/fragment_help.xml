@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/backgrond"
+    tools:context=".ui.home.HistoryFragment">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="25dp">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="15sp"
+        android:text="Help"
+        android:textSize="30sp"
+        android:textStyle="bold|italic"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+
+            android:text="Q: how many orders can I make at the same time?
+\n \nA: you can make 2 orders at the same time whether from the same copy center or not but the single order should be from the same copy center. If you want to make a third order you should finish one of the 2 orders first.
+
+\n \nQ: how much will I pay for the service?
+\n \nA: our service is based on 2 things, the first one is how many students we serve in the order which is known from the number of copies. The second one is the number of pages included in the order, if you make an order for yourself only (one copy / lecture) you will be paid 1 LE/ 100 pages
+Eg. 1:100 1 LE, 101:200 2 LE etc.
+If you increase the number of copies in the order, we will do our best to calculate the number of pages for each student and the same calculating operation will be done as in the previous example.
+
+\n \nQ: can I activate the check mark manually?
+\n \nA: yes, if you have bought certain lecture/s from outside the app or one of your colleagues ordered them for you, you can activate the check mark manually to know that you have bought them.
+
+\n \nQ: can I make an order for my colleague?
+\n \nA: of course yes, all what you have to do is to make the order and give your colleague the order number which is specific for each order and when your colleague receives the order you confirm that the order has been received.
+
+\n \nQ: can I cancel the order after confirming it?
+\n \nA: yes you can cancel the order even if it is ready but if we find a lot of orders will be canceled we will put restrictions on cancelling the order.
+
+\n \nQ: what is the maximum number of copies I can make in the order?
+\n \nA: you can order up to 5 copies for each lecture or notes.
+
+\n \nQ: when will I receive my order?
+\n \nA: when you confirm your order a waiting number will appear which is the number of orders that are being prepared before your order and when your order is ready it will appear in your mobile phone that it is ready so you can go to the copy center to receive it. But you have to receive the order within 24 hours or the order will be cancelled automatically and in this situation you have to choose one of three actions
+\n \n1)	You received the order but forgot to confirm (click received)
+\n \n2)	You haven’t received the order and you want to resend it (click resend)
+\n \n3)	You haven’t received the order and you want to cancel it (click cancel order)
+\n \nHint: you can make your order at night or while you are going to the university in the morning and receive it after you finish your day at the college.
+For any information or feedbacks contact us at sawar.customercare@gmail.com
+Or visit our Facebook page www.facebook.com/sawarservice
+
+"/>
+    </LinearLayout>
+
+    </ScrollView>
+</RelativeLayout>
+

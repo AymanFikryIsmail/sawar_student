@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#01579b</color>
+    <color name="colorPrimaryDark">#01579b</color>
+    <color name="colorAccent">#D81B60</color>
+
+    <color name="center">#707070</color>
+    <color name="white">#ffffff</color>
+    <color name="end">#808080</color>
+    <color name="darkYellow">#DBB10B</color>
+    <color name="darkPurple">#510567</color>
+    <color name="lightPurple">#65087F</color>
+    <color name="black">#000000</color>
+    <color name="golden">#FFD700</color>
+    <!-- welcome screens background color-->
+    <color name="backgroundg_image">#510567</color>
+    <color name= "grey1">#99000000</color>
+
+    <!-- font colors-->
+    <color name="font_color">#FFFFFF</color>
+
+    <color name="editTextColor">#200A2B</color>
+
+
+    <color name="faceBookLoginBtn">#425BB4</color>
+    <color name="textColorHint">#FFFFFF</color>
+    <color name="googlePlusLoginBtn">#D34836</color>
+
+
+
+    <!-- dots active colors -->
+    <color name="dot_light_screen1">#DBB10B</color>
+    <color name="dot_light_screen2">#DBB10B</color>
+    <color name="dot_light_screen3">#DBB10B</color>
+
+    <!-- dots inactive colors -->
+    <color name="dot_dark_screen1">#FFFFFF</color>
+    <color name="dot_dark_screen2">#FFFFFF</color>
+    <color name="dot_dark_screen3">#FFFFFF</color>
+
+
+    <array name="array_dot_active">
+        <item>@color/dot_light_screen1</item>
+        <item>@color/dot_light_screen2</item>
+        <item>@color/dot_light_screen3</item>
+    </array>
+
+    <array name="array_dot_inactive">
+        <item>@color/dot_dark_screen1</item>
+        <item>@color/dot_dark_screen2</item>
+        <item>@color/dot_dark_screen3</item>
+    </array>
+
+    <color name="blue">#425BB4</color>
+    <color name="secondblue">#2680eb</color>
+
+    <color name= "brown">#3d3d3d</color>
+    <color name= "grey">#f1f1f1</color>
+    <color name="textcolor1">#de000000</color>
+    <color name="textcolor2">#99000000</color>
+    <color name="hometabselcet">#16ffff</color>
+
+</resources>

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "748675025721",
+    "firebase_url": "https://sawar-91b28.firebaseio.com",
+    "project_id": "sawar-91b28",
+    "storage_bucket": "sawar-91b28.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:748675025721:android:1adcbbd41ce6b7456f76e8",
+        "android_client_info": {
+          "package_name": "com.hesham.sawarstudent"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "748675025721-kia67bpb05ldctatrvac6tj2nur62vr7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.hesham.sawarstudent",
+            "certificate_hash": "20373142a6d450e375270286294ce9bb21d08bda"
+          }
+        },
+        {
+          "client_id": "748675025721-dq68nlqmf4kd2d8dvjun88t723vmvr9n.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqR-g8FutuEm-MiFBeuSSF8vtkmMeeTwQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "748675025721-dq68nlqmf4kd2d8dvjun88t723vmvr9n.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

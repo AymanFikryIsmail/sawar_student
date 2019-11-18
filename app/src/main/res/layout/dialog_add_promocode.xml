@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@color/white"
+    android:elevation="0dp"
+    app:contentPadding="25dp"
+    app:cardCornerRadius="25dp"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="6dp"
+    android:minWidth="150dp"
+    >
+
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/promocodename"
+        android:hint="promo code "
+        android:backgroundTint="@color/colorPrimary"
+
+        />
+
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/addPromoCode"
+        android:layout_marginTop="25dp"
+        android:text="add promo code"
+        android:textColor="@color/white"
+        android:background="@drawable/custom_third_button"
+        />
+</LinearLayout>
+
+</androidx.cardview.widget.CardView>

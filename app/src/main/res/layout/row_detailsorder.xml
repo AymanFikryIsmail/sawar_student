@@ -27,50 +27,49 @@
             />
 
 
-        <ImageView
-            android:id="@+id/minuscopy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:paddingEnd="15dp"
-            android:padding="8dp"
-            android:src="@drawable/icon_keyboard_arrow_down_two_toned"
-            android:layout_toEndOf="@+id/ordername"
-            android:visibility="invisible"
-            />
+        <!--<ImageView-->
+            <!--android:id="@+id/minuscopy"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_centerVertical="true"-->
+            <!--android:paddingEnd="15dp"-->
+            <!--android:padding="8dp"-->
+            <!--android:src="@drawable/icon_keyboard_arrow_down_two_toned"-->
+            <!--android:layout_toEndOf="@+id/ordername"-->
+            <!--android:visibility="invisible"-->
+            <!--/>-->
 
         <TextView
             android:id="@+id/orderno"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toEndOf="@+id/minuscopy"
+            android:layout_toEndOf="@+id/ordername"
             android:layout_weight="1"
             android:gravity="center"
             android:text="0 "
-
             android:textColor="@color/textcolor2"
             android:textSize="12sp" />
 
-        <ImageView
-            android:id="@+id/addcopy"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:paddingEnd="30dp"
-            android:layout_toEndOf="@+id/orderno"
-            android:padding="8dp"
-            android:layout_centerVertical="true"
-android:visibility="invisible"
-            android:src="@drawable/icon_keyboard_arrow_up_sharp" />
+        <!--<ImageView-->
+            <!--android:id="@+id/addcopy"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:paddingEnd="30dp"-->
+            <!--android:layout_toEndOf="@+id/orderno"-->
+            <!--android:padding="8dp"-->
+            <!--android:layout_centerVertical="true"-->
+<!--android:visibility="invisible"-->
+            <!--android:src="@drawable/icon_keyboard_arrow_up_sharp" />-->
 
         <TextView
             android:id="@+id/orderprice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
             android:paddingEnd="25dp"
-            android:layout_toEndOf="@+id/addcopy"
-            android:layout_weight="1"
+            android:layout_toEndOf="@+id/orderno"
             android:gravity="center"
             android:text="price  : aa"
             android:textColor="@color/textcolor2"

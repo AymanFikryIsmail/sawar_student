@@ -74,6 +74,7 @@ public class CartFragment extends Fragment implements CartAdapter.EventListener 
 
     LinearLayout calculationId;
 
+    AlertDialog addOrderDialog;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -315,13 +316,18 @@ public class CartFragment extends Fragment implements CartAdapter.EventListener 
             }
         });
     }
-
+     int i=0;
     void confirmOrder(int waiting) {
+//        addOrderDialog=new AlertDialog(getContext());
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext(), R.style.AlertDialogCustom);
         new AlertDialog.Builder(getContext(), R.style.AlertDialogCustom)
                 .setMessage("Once you have confirmed you have to receive the order within 24 hours \n waiting: " + waiting)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
-                        addOrder();
+                        if (i==0){
+                            addOrder();
+                        }
+                        i=1;
                     }
                 })
                 // A null listener allows the button to dismiss the dialog and take no further action.

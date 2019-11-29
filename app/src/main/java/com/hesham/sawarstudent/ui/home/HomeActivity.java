@@ -89,12 +89,18 @@ public class HomeActivity extends AppCompatActivity
         Glide.with(this).load(BASE_URL + prefManager.getStudentData().getPhoto())
                 .apply(requestOptions)
                 .into(centerImage);
+
         HomeFragment newsFragment = new HomeFragment();
         loadFragment(newsFragment);
         getPoints();
         getOrders();
         if (prefManager.getCartCenterId() != 0) {
             SetNotificationCartBadge();
+        }
+
+        if (getIntent().getExtras()!=null){
+            OrderFragment s = new OrderFragment();
+            loadFragment(s);
         }
 //        if (prefManager.getOrderCenterId() != 0) {
 //            SetNotificationOrderBadge();

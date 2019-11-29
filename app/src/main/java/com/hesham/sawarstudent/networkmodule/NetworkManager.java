@@ -20,7 +20,7 @@ import static java.lang.String.format;
 
 public class NetworkManager {
     protected static Retrofit retrofit;
-    public static String BASE_URL= "http://192.168.43.104:3000/";//http://sawarservice.com/   http://192.168.43.104:3000/   192.168.43.104
+    public static String BASE_URL= "http://192.168.0.152:3000/";//http://sawarservice.com/   http://192.168.43.104:3000/   192.168.43.104
 
     private ApiRequest apiRequest;
     private static NetworkManager networkManager;

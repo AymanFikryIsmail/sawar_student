@@ -14,9 +14,10 @@
         android:layout_height="wrap_content"
         android:layout_centerVertical="true"
         android:gravity="center"
-        android:text="name  :"
+        android:text="name  :aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
         android:textColor="@color/textcolor2"
         android:textSize="12sp"
+        android:padding="3dp"
 
         />
 
@@ -71,12 +72,13 @@
         android:textColor="@color/textcolor2"
         android:textSize="12sp" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatImageView
         android:id="@+id/removecart"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
-        android:background="@drawable/custom_third_button"
+        android:src="@drawable/delete_ic"
+        android:layout_centerInParent="true"
         android:paddingStart="8dp"
         android:paddingEnd="8dp"
         android:text="remove"

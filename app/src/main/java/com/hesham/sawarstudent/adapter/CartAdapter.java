@@ -78,7 +78,7 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
 
         public TextView papername,numofcpoies  , price, pages;
         ImageView minuscopy, addcopy;
-        Button removecart;
+        ImageView removecart;
 
         public MyViewHolder(View itemView) {
             super(itemView);

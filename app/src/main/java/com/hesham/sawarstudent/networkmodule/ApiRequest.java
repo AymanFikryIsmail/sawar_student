@@ -70,8 +70,9 @@ public interface ApiRequest {
 
 
     @POST("faculty/subjects/filter")
+    Call<SubjectResponse> getFilteredSubjects(@Body SubjectPojo body);
+    @POST("faculty/subjects/all")
     Call<SubjectResponse> getAllSubjects(@Body SubjectPojo body);
-
     @GET("faculty/paper/get/stud")
     Call<PaperResponse> getPapers(@Query("type") String type, @Query("sub_id") int subId, @Query("stud_id") int stud_id);
 

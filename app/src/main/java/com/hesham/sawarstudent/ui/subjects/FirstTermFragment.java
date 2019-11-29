@@ -82,7 +82,7 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
                 if (depPojos.size() != 0) {
                     depId = depPojos.get(i).getId();
                 }
-                getSubjects();
+                getFilteredSubjects();
             }
 
             @Override
@@ -109,8 +109,44 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
     }
 
 
-    public void getSubjects() {//prefManager.getCenterId()
+    public void getFilteredSubjects() {//prefManager.getCenterId()
         SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getStudentData().getFacultyId(), years, 1, depId);
+        Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
+                getFilteredSubjects(subjectPojo);
+        progress_view.setVisibility(View.VISIBLE);
+
+        call.enqueue(new Callback<SubjectResponse>() {
+            @Override
+            public void onResponse(Call<SubjectResponse> call, Response<SubjectResponse> response) {
+                if (response.body().status && response.body().cc_id != null) {
+                    Log.d("tag", "articles total result:: " + response.body().getMessage());
+                    facultyPojos.clear();
+                    facultyPojos.addAll(response.body().cc_id);
+                    if (facultyPojos.size()==0){
+                        showEmpty();
+                    }else {
+                        hideEmpty();
+                    }
+                    facultySelectAdapter = new SubjectHomeAdapter(getContext(),FirstTermFragment.this, facultyPojos ,years, 1);
+                    facultyRecyclerView.setAdapter(facultySelectAdapter);
+                }
+                progress_view.setVisibility(View.GONE);
+
+            }
+
+            @Override
+            public void onFailure(Call<SubjectResponse> call, Throwable t) {
+                Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+                showEmpty();
+                progress_view.setVisibility(View.GONE);
+
+            }
+        });
+    }
+
+    public void getSubjects() {//prefManager.getCenterId()
+        SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getStudentData().getFacultyId(), years, 1);
         Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
                 getAllSubjects(subjectPojo);
         progress_view.setVisibility(View.VISIBLE);
@@ -144,7 +180,6 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
             }
         });
     }
-
     public void getAllDepartments() {//prefManager.getCenterId()
         Call<DepartmentResponse> call = Apiservice.getInstance().apiRequest.
                 getAllDepartments(prefManager.getFacultyId());

@@ -2,45 +2,22 @@ package com.hesham.sawarstudent.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.Typeface;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
-import android.widget.Button;
-import android.widget.EditText;
-import android.widget.PopupMenu;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.view.ContextThemeWrapper;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hesham.sawarstudent.R;
 import com.hesham.sawarstudent.data.model.SubjectPojo;
-import com.hesham.sawarstudent.data.response.SubjectResponse;
-import com.hesham.sawarstudent.networkmodule.Apiservice;
-import com.hesham.sawarstudent.ui.subjects.PaperFragment;
+import com.hesham.sawarstudent.ui.paper.PaperFragment;
 import com.hesham.sawarstudent.utils.PrefManager;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class SubjectHomeAdapter extends RecyclerView.Adapter<SubjectHomeAdapter.MyViewHolder> {
     private Context context;

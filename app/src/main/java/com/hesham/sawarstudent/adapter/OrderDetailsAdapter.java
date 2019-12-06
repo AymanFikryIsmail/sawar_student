@@ -67,22 +67,13 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
             }
 
             public void bind(final OrderDetailsPojo orderPojo) {
-                String lectutre="Lecture";
-                if (orderPojo.getType().equals("l")){
-                    lectutre="Lecture";
-                }else if (orderPojo.getType().equals("h")){
-                    lectutre="Handouts";
+                String lectutre=orderPojo.getPaperCategory();
+                String year=orderPojo.getYear();
+                String faculty=orderPojo.getFaculty();
+                String department=orderPojo.getDepartment();
 
-                }else if (orderPojo.getType().equals("s")){
-                    lectutre="Sections";
-
-                }else if (orderPojo.getType().equals("c")){
-                    lectutre="Courses";
-
-                }else if (orderPojo.getType().equals("r")){
-                    lectutre="Revisions";
-                }
-                ordername.setText(orderPojo.getSubject() +"/"+lectutre+"/" + orderPojo.getName());
+                ordername.setText(year +"/"+ faculty +"/"+ department +"/"+orderPojo.getSubject() +"/"+lectutre+"/" + orderPojo.getName());//                date.setText("date: "+orderPojo.getDate());
+//
 //                date.setText("date: "+orderPojo.getDate());
 //                time.setText("Time: "+orderPojo.getDate());
                 copy.setText(""+orderPojo.getNo());

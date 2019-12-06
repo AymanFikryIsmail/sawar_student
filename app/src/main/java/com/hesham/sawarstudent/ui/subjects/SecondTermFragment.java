@@ -3,6 +3,7 @@ package com.hesham.sawarstudent.ui.subjects;
 import android.app.Dialog;
 import android.os.Bundle;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,8 +27,10 @@ import com.hesham.sawarstudent.R;
 import com.hesham.sawarstudent.adapter.SubjectHomeAdapter;
 import com.hesham.sawarstudent.data.model.DepartmentPojo;
 import com.hesham.sawarstudent.data.model.SubjectPojo;
+import com.hesham.sawarstudent.data.response.CustomResponse;
 import com.hesham.sawarstudent.data.response.DepartmentResponse;
 import com.hesham.sawarstudent.data.response.SubjectResponse;
+import com.hesham.sawarstudent.databinding.FragmentSecondTermBinding;
 import com.hesham.sawarstudent.networkmodule.Apiservice;
 import com.hesham.sawarstudent.networkmodule.NetworkUtilities;
 import com.hesham.sawarstudent.ui.home.HomeActivity;
@@ -45,16 +48,12 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
 
     private List<SubjectPojo> facultyPojos;
     private List<DepartmentPojo> depPojos;
-    private Integer depId;
-    private RecyclerView facultyRecyclerView;
+    public Integer depId;
     private SubjectHomeAdapter facultySelectAdapter;
 
     PrefManager prefManager;
 
     private int years;
-    TextView emptyLayout;
-    private FrameLayout progress_view;
-    private Spinner departmentSpinner;
 
     public SecondTermFragment(int years) {
         this.years=years;
@@ -64,18 +63,20 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
         super.onCreate(savedInstanceState);
 
     }
+    private FragmentSecondTermBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_second_term, container, false);
-        facultyRecyclerView=view.findViewById(R.id.termRecyclerView);
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_second_term, container, false);
+        View view = binding.getRoot();
+        binding.setLifecycleOwner(this);
         facultyPojos = new ArrayList<>();
         depPojos= new ArrayList<>();
-        emptyLayout=view.findViewById(R.id.emptyLayout);
-        departmentSpinner = view.findViewById(R.id.departmentSpinner);
-        departmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+        binding.departmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (depPojos.size() != 0) {
@@ -90,23 +91,39 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
             }
         });
         hideEmpty();
-        progress_view = view.findViewById(R.id.progress_view);
 
         prefManager=new PrefManager(getContext());
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext() , 2);
-        facultyRecyclerView.setLayoutManager(gridLayoutManager);
+        binding.termRecyclerView.setLayoutManager(gridLayoutManager);
         facultySelectAdapter = new SubjectHomeAdapter(getContext(),this,facultyPojos,years,2);
-        facultyRecyclerView.setAdapter(facultySelectAdapter);
+        binding.termRecyclerView.setAdapter(facultySelectAdapter);
+
+        binding.emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callApi();
+            }
+        });
+        return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        callApi();
+    }
+
+    void callApi() {
+        hideEmpty();
         if (NetworkUtilities.isOnline(getContext())) {
             if (NetworkUtilities.isFast(getContext())) {
                 getAllDepartments();
-            }else {
+            } else {
                 Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
             }
         } else {
             Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
-        return view;
     }
 
 
@@ -115,7 +132,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
         SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getStudentData().getFacultyId(), years, 1, depId);
         Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
                 getFilteredSubjects(subjectPojo);
-        progress_view.setVisibility(View.VISIBLE);
+        binding.progressView.setVisibility(View.VISIBLE);
 
         call.enqueue(new Callback<SubjectResponse>() {
             @Override
@@ -130,9 +147,9 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                         hideEmpty();
                     }
                     facultySelectAdapter = new SubjectHomeAdapter(getContext(),SecondTermFragment.this, facultyPojos ,years, 1);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
+                    binding.termRecyclerView.setAdapter(facultySelectAdapter);
                 }
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
 
             }
 
@@ -141,7 +158,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
                 showEmpty();
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
 
             }
         });
@@ -150,7 +167,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
         SubjectPojo subjectPojo=new SubjectPojo(prefManager.getCenterId() ,prefManager.getStudentData().getFacultyId(), years,2);
         Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
                 getAllSubjects(subjectPojo);
-        progress_view.setVisibility(View.VISIBLE);
+        binding.progressView.setVisibility(View.VISIBLE);
 
         call.enqueue(new Callback<SubjectResponse>() {
             @Override
@@ -165,9 +182,9 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                         hideEmpty();
                     }
                     facultySelectAdapter = new SubjectHomeAdapter(getContext(),SecondTermFragment.this,facultyPojos,years,2);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
+                    binding.termRecyclerView.setAdapter(facultySelectAdapter);
                 }
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
 
             }
 
@@ -176,7 +193,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
                 showEmpty();
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
 
             }
         });
@@ -185,7 +202,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
     public void getAllDepartments() {//prefManager.getCenterId()
         Call<DepartmentResponse> call = Apiservice.getInstance().apiRequest.
                 getAllDepartments(prefManager.getFacultyId());
-        progress_view.setVisibility(View.VISIBLE);
+        binding.progressView.setVisibility(View.VISIBLE);
         call.enqueue(new Callback<DepartmentResponse>() {
             @Override
             public void onResponse(Call<DepartmentResponse> call, Response<DepartmentResponse> response) {
@@ -195,10 +212,10 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                         depPojos.clear();
                         depPojos.addAll(response.body().cc_id);
                         if (depPojos.size() == 0) {
-                            departmentSpinner.setVisibility(View.GONE);
+                            binding.departmentSpinner.setVisibility(View.GONE);
                             getSubjects();
                         } else {
-                            departmentSpinner.setVisibility(View.VISIBLE);
+                            binding.departmentSpinner.setVisibility(View.VISIBLE);
                             depId = depPojos.get(0).getId();
                         }
                         List<String> depList = new ArrayList<>(depPojos.size());
@@ -208,10 +225,10 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                         ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(getContext(),
                                 android.R.layout.simple_spinner_item, depList);
                         dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                        departmentSpinner.setAdapter(dataAdapter);
+                        binding.departmentSpinner.setAdapter(dataAdapter);
                     }
                 }
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
             }
 
             @Override
@@ -219,10 +236,11 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
                 showEmpty();
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
             }
         });
     }
+
 
 
 
@@ -233,12 +251,12 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
     }
 
     void showEmpty(){
-        emptyLayout.setVisibility(View.VISIBLE);
+        binding.emptyLayout.setVisibility(View.VISIBLE);
 
 
     }
     void hideEmpty(){
-        emptyLayout.setVisibility(View.GONE);
+        binding.emptyLayout.setVisibility(View.GONE);
 
     }
 }

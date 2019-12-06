@@ -7,7 +7,7 @@
     android:fillViewport="true"
     android:orientation="vertical"
     android:background="@drawable/backgrond"
-    tools:context=".ui.subjects.YearsFragment">
+    tools:context=".ui.year.YearsFragment">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

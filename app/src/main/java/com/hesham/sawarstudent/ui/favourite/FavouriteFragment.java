@@ -10,6 +10,7 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,7 +21,9 @@ import com.hesham.sawarstudent.adapter.FavouriteHomeAdapter;
 import com.hesham.sawarstudent.adapter.SubjectHomeAdapter;
 import com.hesham.sawarstudent.data.model.SubjectPojo;
 import com.hesham.sawarstudent.data.response.SubjectResponse;
+import com.hesham.sawarstudent.databinding.FragmentFavouriteBinding;
 import com.hesham.sawarstudent.networkmodule.Apiservice;
+import com.hesham.sawarstudent.networkmodule.NetworkUtilities;
 import com.hesham.sawarstudent.ui.home.HomeActivity;
 import com.hesham.sawarstudent.utils.PrefManager;
 
@@ -34,47 +37,70 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class FavouriteFragment extends Fragment  implements FavouriteHomeAdapter.EventListener {
+public class FavouriteFragment extends Fragment implements FavouriteHomeAdapter.EventListener {
 
 
     private List<SubjectPojo> facultyPojos;
 
-    private RecyclerView facultyRecyclerView;
     private FavouriteHomeAdapter facultySelectAdapter;
 
     PrefManager prefManager;
     private int years;
-    TextView emptyLayout;
-    private FrameLayout progress_view;
 
-    public FavouriteFragment( ) {
+    public FavouriteFragment() {
     }
 
+    private FragmentFavouriteBinding binding;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_favourite, container, false);
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_favourite, container, false);
+        View view = binding.getRoot();
+        binding.setLifecycleOwner(this);
+
         prefManager = new PrefManager(getContext());
-        facultyRecyclerView = view.findViewById(R.id.termRecyclerView);
         facultyPojos = new ArrayList<>();
-        emptyLayout=view.findViewById(R.id.emptyLayout);
-        progress_view = view.findViewById(R.id.progress_view);
 
         hideEmpty();
-        RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext() );
-        facultyRecyclerView.setLayoutManager(gridLayoutManager);
-        facultySelectAdapter = new FavouriteHomeAdapter(getContext(),this, facultyPojos);
-        facultyRecyclerView.setAdapter(facultySelectAdapter);
-        getFavourite();
+        RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext());
+        binding.termRecyclerView.setLayoutManager(gridLayoutManager);
+        facultySelectAdapter = new FavouriteHomeAdapter(getContext(), this, facultyPojos);
+        binding.termRecyclerView.setAdapter(facultySelectAdapter);
+
+        binding.emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callApi();
+            }
+        });
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        callApi();
+    }
+
+    private void callApi() {
+        hideEmpty();
+        if (NetworkUtilities.isOnline(getContext())) {
+            if (NetworkUtilities.isFast(getContext())) {
+                getFavourite();
+            } else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
+        }
+    }
 
     public void getFavourite() {//prefManager.getCenterId()
         Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.getFavourite(prefManager.getStudentData().getId());
-        progress_view.setVisibility(View.VISIBLE);
+        binding.progressView.setVisibility(View.VISIBLE);
         call.enqueue(new Callback<SubjectResponse>() {
             @Override
             public void onResponse(Call<SubjectResponse> call, Response<SubjectResponse> response) {
@@ -89,17 +115,18 @@ public class FavouriteFragment extends Fragment  implements FavouriteHomeAdapter
                             hideEmpty();
                         }
                         facultySelectAdapter = new FavouriteHomeAdapter(getContext(), FavouriteFragment.this, facultyPojos);
-                        facultyRecyclerView.setAdapter(facultySelectAdapter);
+                        binding.termRecyclerView.setAdapter(facultySelectAdapter);
                     }
                 }
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
 
             }
 
             @Override
             public void onFailure(Call<SubjectResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
+                showEmpty();
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
 
             }
@@ -109,8 +136,8 @@ public class FavouriteFragment extends Fragment  implements FavouriteHomeAdapter
 
     @Override
     public void onEvent(Fragment data) {
-        ((HomeActivity)getActivity()).selectFavourite();
-        ((HomeActivity)getActivity()).loadFragment(data);
+        ((HomeActivity) getActivity()).selectFavourite();
+        ((HomeActivity) getActivity()).loadFragment(data);
     }
 
     @Override
@@ -119,17 +146,19 @@ public class FavouriteFragment extends Fragment  implements FavouriteHomeAdapter
     }
 
 
-    public  void checkForEmpty(){
-        if (facultyPojos.size()==0){
+    public void checkForEmpty() {
+        if (facultyPojos.size() == 0) {
             showEmpty();
-        }else {
+        } else {
             hideEmpty();
         }
     }
-    void showEmpty(){
-        emptyLayout.setVisibility(View.VISIBLE);
+
+    void showEmpty() {
+        binding.emptyLayout.setVisibility(View.VISIBLE);
     }
-    void hideEmpty(){
-        emptyLayout.setVisibility(View.GONE);
+
+    void hideEmpty() {
+        binding.emptyLayout.setVisibility(View.GONE);
     }
 }

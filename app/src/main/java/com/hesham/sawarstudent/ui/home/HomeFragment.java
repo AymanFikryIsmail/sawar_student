@@ -7,8 +7,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -19,6 +21,7 @@ import com.hesham.sawarstudent.adapter.OrderHistoryAdapter;
 import com.hesham.sawarstudent.data.model.CenterPojo;
 import com.hesham.sawarstudent.data.response.CenterResponse;
 import com.hesham.sawarstudent.data.response.OrderResponse;
+import com.hesham.sawarstudent.databinding.FragmentHomeBinding;
 import com.hesham.sawarstudent.networkmodule.Apiservice;
 import com.hesham.sawarstudent.networkmodule.NetworkUtilities;
 import com.hesham.sawarstudent.ui.order.OrderFragment;
@@ -34,61 +37,75 @@ import retrofit2.Response;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class HomeFragment extends Fragment implements CentersHomeAdapter.EventListener{
+public class HomeFragment extends Fragment implements CentersHomeAdapter.EventListener {
 
     private List<CenterPojo> facultyPojos;
 
-    private RecyclerView facultyRecyclerView;
     private CentersHomeAdapter facultySelectAdapter;
+
     public HomeFragment() {
         // Required empty public constructor
     }
-    private FrameLayout progress_view;
 
 
     PrefManager prefManager;
+
+    private FragmentHomeBinding binding;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view= inflater.inflate(R.layout.fragment_home, container, false);
-        facultyRecyclerView=view.findViewById(R.id.centersRecyclerView);
+//        View view= inflater.inflate(R.layout.fragment_home, container, false);
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_home, container, false);
+        View view = binding.getRoot();
+        binding.setLifecycleOwner(this);
         facultyPojos = new ArrayList<>();
-        progress_view = view.findViewById(R.id.progress_view);
-
-        prefManager=new PrefManager(getContext());
+        hideEmpty();
+        binding.emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callApi();
+            }
+        });
+        prefManager = new PrefManager(getContext());
         LinearLayoutManager gridLayoutManager = new LinearLayoutManager(getContext());
-        facultyRecyclerView.setLayoutManager(gridLayoutManager);
-        facultySelectAdapter = new CentersHomeAdapter(getContext(),this,facultyPojos);
-        facultyRecyclerView.setAdapter(facultySelectAdapter);
+        binding.centersRecyclerView.setLayoutManager(gridLayoutManager);
+        facultySelectAdapter = new CentersHomeAdapter(getContext(), this, facultyPojos);
+        binding.centersRecyclerView.setAdapter(facultySelectAdapter);
+        return view;
+    }
+
+    void callApi() {
+        hideEmpty();
         if (NetworkUtilities.isOnline(getContext())) {
             if (NetworkUtilities.isFast(getContext())) {
                 getCenters();
-            }else {
+            } else {
                 Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
             }
         } else {
             Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
         }
-        return view;
     }
 
 
     public void getCenters() {
         Call<CenterResponse> call = Apiservice.getInstance().apiRequest.
-                getAllCenter(prefManager.getStudentData().getUniv(), prefManager.getStudentData().getFacultyId());
-        progress_view.setVisibility(View.VISIBLE);
+                getAllCenter(prefManager.getStudentData().getUniv(), prefManager.getStudentData().getFacultyId(), prefManager.getStudentData().getId());
+        binding.progressView.setVisibility(View.VISIBLE);
         call.enqueue(new Callback<CenterResponse>() {
             @Override
             public void onResponse(Call<CenterResponse> call, Response<CenterResponse> response) {
-                if (response.body()!=null &&response.body().status  && response.body().data != null) {
+                if (response.body() != null && response.body().status && response.body().data != null) {
                     Log.d("tag", "articles total result:: " + response.body().getMessage());
                     facultyPojos.clear();
                     facultyPojos.addAll(response.body().data);
-                    facultySelectAdapter = new CentersHomeAdapter(getContext(), HomeFragment.this,facultyPojos);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
+                    facultySelectAdapter = new CentersHomeAdapter(getContext(), HomeFragment.this, facultyPojos);
+                    binding.centersRecyclerView.setAdapter(facultySelectAdapter);
                 }
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
 
             }
 
@@ -96,13 +113,33 @@ public class HomeFragment extends Fragment implements CentersHomeAdapter.EventLi
             public void onFailure(Call<CenterResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
+                showEmpty();
             }
         });
     }
 
     @Override
     public void onEvent(Fragment data) {
-        ((HomeActivity)getActivity()).loadFragment(data);
+        ((HomeActivity) getActivity()).loadFragment(data);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        callApi();
+    }
+
+    void showEmpty() {
+        binding.emptyLayout.setVisibility(View.VISIBLE);
+
+
+    }
+
+    void hideEmpty() {
+        binding.emptyLayout.setVisibility(View.GONE);
+
+    }
+
+
 }

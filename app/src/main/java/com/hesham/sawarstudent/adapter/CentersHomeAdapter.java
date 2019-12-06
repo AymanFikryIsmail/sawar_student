@@ -14,11 +14,10 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.hesham.sawarstudent.R;
 import com.hesham.sawarstudent.data.model.CenterPojo;
-import com.hesham.sawarstudent.ui.subjects.YearsFragment;
+import com.hesham.sawarstudent.ui.year.YearsFragment;
 import com.hesham.sawarstudent.utils.PrefManager;
 
 import java.text.DecimalFormat;

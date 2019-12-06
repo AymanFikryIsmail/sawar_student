@@ -18,6 +18,7 @@ import com.hesham.sawarstudent.adapter.OrderDetailsAdapter;
 import com.hesham.sawarstudent.data.model.OrderDetailsPojo;
 import com.hesham.sawarstudent.data.response.DetailsResponse;
 import com.hesham.sawarstudent.networkmodule.Apiservice;
+import com.hesham.sawarstudent.networkmodule.NetworkUtilities;
 import com.hesham.sawarstudent.utils.PrefManager;
 
 import java.util.ArrayList;
@@ -38,37 +39,61 @@ public class OrderActivity extends AppCompatActivity {
     PrefManager prefManager;
     int orderid;
     LinearLayout calculationId;
-    TextView emptyLayout;
+    LinearLayout emptyLayout;
     private TextView totalPrice, totalService, totalMonye;
     double total_service, total_money;
     double total_Price = 0;
-    double orderservice , ordertotal;
+    double orderservice, ordertotal;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order);
-        facultyRecyclerView=findViewById(R.id.termRecyclerView);
+        facultyRecyclerView = findViewById(R.id.termRecyclerView);
         prefManager = new PrefManager(this);
-        if (getIntent().getExtras()!=null){
-        orderid=getIntent().getIntExtra("orderid",0);
-        ordertotal= getIntent().getDoubleExtra("ordertotal",0);
-        orderservice =getIntent().getDoubleExtra("orderservice",0);
+        if (getIntent().getExtras() != null) {
+            orderid = getIntent().getIntExtra("orderid", 0);
+            ordertotal = getIntent().getDoubleExtra("ordertotal", 0);
+            orderservice = getIntent().getDoubleExtra("orderservice", 0);
         }
 
         facultyPojos = new ArrayList<>();
         initView();
-        calculationId=findViewById(R.id.calculationId);
-        emptyLayout=findViewById(R.id.emptyLayout);
+        calculationId = findViewById(R.id.calculationId);
+        emptyLayout = findViewById(R.id.emptyLayout);
         hideEmpty();
         RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(this);
         facultyRecyclerView.setLayoutManager(gridLayoutManager);
-        facultySelectAdapter = new OrderDetailsAdapter(this,facultyPojos);
+        facultySelectAdapter = new OrderDetailsAdapter(this, facultyPojos);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
-        getOrdersDetails();
 
-//        calculateTotalPrice();
-
+        emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callApi();
+            }
+        });
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        callApi();
+    }
+
+    private void callApi() {
+        hideEmpty();
+        if (NetworkUtilities.isOnline(this)) {
+            if (NetworkUtilities.isFast(this)){
+                getOrdersDetails();
+            } else{
+                Toast.makeText(this, "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(this, "Please , check your network connection", Toast.LENGTH_LONG).show();
+        }
+    }
+
     void initView() {
         totalPrice = findViewById(R.id.totalPriceCart);
         totalService = findViewById(R.id.totalServiceCart);
@@ -85,7 +110,7 @@ public class OrderActivity extends AppCompatActivity {
         for (int i = 0; i < facultyPojos.size(); i++) {
             total_Price = total_Price + facultyPojos.get(i).getPrice() * facultyPojos.get(i).getNo();
         }
-        totalPrice.setText( total_Price + "");
+        totalPrice.setText(total_Price + "");
         double service = calculateService();
 
         total_service = service;
@@ -116,11 +141,11 @@ public class OrderActivity extends AppCompatActivity {
             }
             if (sum > 0) {
 //                console.log(sum/100)
-                double rem=sum % 100;
-                if (rem==0){
-                    serv += Math.floor(sum / 100) ;
-                }else {
-                    serv += Math.floor(sum / 100)+1 ;
+                double rem = sum % 100;
+                if (rem == 0) {
+                    serv += Math.floor(sum / 100);
+                } else {
+                    serv += Math.floor(sum / 100) + 1;
                 }
                 sum = 0;
             } else {
@@ -129,28 +154,30 @@ public class OrderActivity extends AppCompatActivity {
         }
         return serv;
     }
+
     public void getOrdersDetails() {//prefManager.getCenterId()
         Call<DetailsResponse> call = Apiservice.getInstance().apiRequest.
                 getOrderDetails(orderid);
         call.enqueue(new Callback<DetailsResponse>() {
             @Override
             public void onResponse(Call<DetailsResponse> call, Response<DetailsResponse> response) {
-               if (response.body()!=null){
-                if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
-                    Log.d("tag", "articles total result:: " + response.body().getMessage());
-                    facultyPojos.clear();
-                    facultyPojos.addAll(response.body().data);
+                if (response.body() != null) {
+                    if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        facultyPojos.clear();
+                        facultyPojos.addAll(response.body().data);
 //                    calculateTotalPrice();
 
-                    if (facultyPojos.size()==0){
-                        showEmpty();
-                    }else {
-                        hideEmpty();
+                        if (facultyPojos.size() == 0) {
+                            showEmpty();
+                        } else {
+                            hideEmpty();
+                        }
+                        facultySelectAdapter = new OrderDetailsAdapter(OrderActivity.this, facultyPojos);
+                        facultyRecyclerView.setAdapter(facultySelectAdapter);
                     }
-                    facultySelectAdapter = new OrderDetailsAdapter(OrderActivity.this, facultyPojos);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
                 }
-            }}
+            }
 
             @Override
             public void onFailure(Call<DetailsResponse> call, Throwable t) {
@@ -163,13 +190,14 @@ public class OrderActivity extends AppCompatActivity {
         });
     }
 
-    void showEmpty(){
+    void showEmpty() {
         emptyLayout.setVisibility(View.VISIBLE);
         calculationId.setVisibility(View.GONE);
 
 
     }
-    void hideEmpty(){
+
+    void hideEmpty() {
         emptyLayout.setVisibility(View.GONE);
         calculationId.setVisibility(View.VISIBLE);
 

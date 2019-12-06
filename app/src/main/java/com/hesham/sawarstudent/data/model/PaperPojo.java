@@ -17,6 +17,7 @@ public class PaperPojo implements Serializable{
     private long date;
     private int sub_id;
     private double price;
+    @SerializedName("category")
     private String type;
     private int paper_flag ;
     private int no ;

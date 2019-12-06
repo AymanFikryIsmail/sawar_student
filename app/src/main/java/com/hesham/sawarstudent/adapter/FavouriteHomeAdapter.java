@@ -13,11 +13,10 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hesham.sawarstudent.R;
-import com.hesham.sawarstudent.data.model.OrderPojo;
 import com.hesham.sawarstudent.data.model.SubjectPojo;
 import com.hesham.sawarstudent.data.response.CustomResponse;
 import com.hesham.sawarstudent.networkmodule.Apiservice;
-import com.hesham.sawarstudent.ui.subjects.PaperFragment;
+import com.hesham.sawarstudent.ui.paper.PaperFragment;
 import com.hesham.sawarstudent.utils.PrefManager;
 
 import java.util.ArrayList;
@@ -81,22 +80,8 @@ public class FavouriteHomeAdapter extends RecyclerView.Adapter<FavouriteHomeAdap
         }
 
         public void bind(final SubjectPojo facultyPojo) {
-            String lectutre="Lecture";
-            if (facultyPojo.getType().equals("l")){
-                lectutre="Lecture";
-            }else if (facultyPojo.getType().equals("h")){
-                lectutre="Handouts";
+            String lectutre=facultyPojo.getCategory();
 
-            }else if (facultyPojo.getType().equals("s")){
-                lectutre="Sections";
-
-            }else if (facultyPojo.getType().equals("c")){
-                lectutre="Courses";
-
-            }else if (facultyPojo.getType().equals("r")){
-                lectutre="Revisions";
-
-            }
             favname.setText(facultyPojo.getSub_name()+"/ "+lectutre);
 
             remove.setOnClickListener(new View.OnClickListener() {
@@ -111,10 +96,10 @@ public class FavouriteHomeAdapter extends RecyclerView.Adapter<FavouriteHomeAdap
                 public void onClick(View view) {
 //                    prefManager.setSubjectId();
                   //  removeFavourite(facultyPojo);
-                    PaperFragment yearsFragment = new PaperFragment(facultyPojo.getType());
+                    PaperFragment paperFragment = new PaperFragment(facultyPojo.getType());
                     prefManager.setSubjectId(facultyPojo.getSub_id());
 //                    PaperFragment.newInstance(  facultyPojo.getType());
-                    listener.onEvent(yearsFragment);
+                    listener.onEvent(paperFragment);
                 }
             });
 
@@ -150,9 +135,6 @@ public class FavouriteHomeAdapter extends RecyclerView.Adapter<FavouriteHomeAdap
 
     }
 
-    public void updateList(List<SubjectPojo> newlist) {
-        facultyPojos = newlist;
-        this.notifyDataSetChanged();
-    }
+
 }
 

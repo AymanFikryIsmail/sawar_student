@@ -3,6 +3,7 @@ package com.hesham.sawarstudent.ui.order;
 
 import android.os.Bundle;
 
+import androidx.databinding.DataBindingUtil;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -21,7 +22,9 @@ import com.hesham.sawarstudent.R;
 import com.hesham.sawarstudent.adapter.OrderHistoryAdapter;
 import com.hesham.sawarstudent.data.model.OrderPojo;
 import com.hesham.sawarstudent.data.response.OrderResponse;
+import com.hesham.sawarstudent.databinding.FragmentOrderBinding;
 import com.hesham.sawarstudent.networkmodule.Apiservice;
+import com.hesham.sawarstudent.networkmodule.NetworkUtilities;
 import com.hesham.sawarstudent.ui.home.HomeActivity;
 import com.hesham.sawarstudent.utils.PrefManager;
 
@@ -39,29 +42,27 @@ public class OrderFragment extends Fragment implements OrderHistoryAdapter.Event
 
 
     private List<OrderPojo> facultyPojos;
-
-    private RecyclerView facultyRecyclerView;
     private OrderHistoryAdapter facultySelectAdapter;
     PrefManager prefManager;
-    TextView emptyLayout;
-    private FrameLayout progress_view;
 
-    private ImageView refresh;
     public OrderFragment() {
         // Required empty public constructor
     }
+
+    private FragmentOrderBinding binding;
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_order, container, false);
-        facultyRecyclerView = view.findViewById(R.id.ordersRecyclerView);
+        binding = DataBindingUtil.inflate(
+                inflater, R.layout.fragment_order, container, false);
+        View view = binding.getRoot();
+        binding.setLifecycleOwner(this);
+
         prefManager = new PrefManager(getContext());
-        emptyLayout = view.findViewById(R.id.emptyLayout);
-        refresh = view.findViewById(R.id.refresh);
-        refresh.setOnClickListener(new View.OnClickListener() {
+        binding.refresh.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 getOrders();
@@ -69,29 +70,51 @@ public class OrderFragment extends Fragment implements OrderHistoryAdapter.Event
         });
 
         hideEmpty();
-        progress_view = view.findViewById(R.id.progress_view);
 
         facultyPojos = new ArrayList<>();
         RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(getContext());
-        facultyRecyclerView.setLayoutManager(gridLayoutManager);
+        binding.ordersRecyclerView.setLayoutManager(gridLayoutManager);
         facultySelectAdapter = new OrderHistoryAdapter(getContext(), facultyPojos, this);
-        facultyRecyclerView.setAdapter(facultySelectAdapter);
-        getOrders();
+        binding.ordersRecyclerView.setAdapter(facultySelectAdapter);
 
-
+        binding.emptyLayout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                callApi();
+            }
+        });
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        callApi();
+    }
+
+    private void callApi() {
+        hideEmpty();
+        if (NetworkUtilities.isOnline(getContext())) {
+            if (NetworkUtilities.isFast(getContext())) {
+                getOrders();
+            } else {
+                Toast.makeText(getContext(), "Poor network connection , please try again", Toast.LENGTH_LONG).show();
+            }
+        } else {
+            Toast.makeText(getContext(), "Please , check your network connection", Toast.LENGTH_LONG).show();
+        }
     }
 
     public void getOrders() {//prefManager.getCenterId()
         Call<OrderResponse> call = Apiservice.getInstance().apiRequest.
                 getMyOrders(prefManager.getStudentData().getId());
-        progress_view.setVisibility(View.VISIBLE);
+        binding.progressView.setVisibility(View.VISIBLE);
 
         call.enqueue(new Callback<OrderResponse>() {
             @Override
             public void onResponse(Call<OrderResponse> call, Response<OrderResponse> response) {
                 facultyPojos.clear();
-                if (response.body()!=null &&response.body().status && response.body().data != null && response.body().data.size() != 0) {
+                if (response.body() != null && response.body().status && response.body().data != null && response.body().data.size() != 0) {
                     Log.d("tag", "articles total result:: " + response.body().getMessage());
                     facultyPojos.clear();
                     facultyPojos.addAll(response.body().data);
@@ -102,11 +125,11 @@ public class OrderFragment extends Fragment implements OrderHistoryAdapter.Event
                         prefManager.setOrderNumber(facultyPojos.size());
                     }
                     facultySelectAdapter = new OrderHistoryAdapter(getContext(), facultyPojos, OrderFragment.this);
-                    facultyRecyclerView.setAdapter(facultySelectAdapter);
-                }else {
+                    binding.ordersRecyclerView.setAdapter(facultySelectAdapter);
+                } else {
                     showEmpty();
                 }
-                progress_view.setVisibility(View.GONE);
+                binding.progressView.setVisibility(View.GONE);
 
             }
 
@@ -114,8 +137,8 @@ public class OrderFragment extends Fragment implements OrderHistoryAdapter.Event
             public void onFailure(Call<OrderResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
                 Toast.makeText(getContext(), "Something went wrong , please try again", Toast.LENGTH_LONG).show();
-
-                progress_view.setVisibility(View.GONE);
+                showEmpty();
+                binding.progressView.setVisibility(View.GONE);
 
             }
         });
@@ -142,11 +165,11 @@ public class OrderFragment extends Fragment implements OrderHistoryAdapter.Event
     }
 
     void showEmpty() {
-        emptyLayout.setVisibility(View.VISIBLE);
+        binding.emptyLayout.setVisibility(View.VISIBLE);
     }
 
     void hideEmpty() {
-        emptyLayout.setVisibility(View.GONE);
+        binding.emptyLayout.setVisibility(View.GONE);
     }
 
 }

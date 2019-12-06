@@ -126,6 +126,7 @@ public class LoginActivity extends AppCompatActivity {
                             prefManager.setStudentData(response.body().data);
                             prefManager.setUserPojo(response.body().data);
                             prefManager.setToken("registered");
+                            prefManager.setFacultyId(response.body().data.getFacultyId());
 //                    prefManager.setToken(response.body().getToken());
                             Intent i = new Intent(LoginActivity.this, HomeActivity.class);
                             startActivity(i);

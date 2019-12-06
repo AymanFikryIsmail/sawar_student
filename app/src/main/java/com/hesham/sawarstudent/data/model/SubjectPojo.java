@@ -19,8 +19,9 @@ public class SubjectPojo {
 
     // for favourite
     private String sub_name;
-    private String type;
+    private int category_id;
     private  int stud_id;
+    private String category;
 
     public SubjectPojo(int cc_id, int faculty_id, int year, int term) {
         this.cc_id = cc_id;
@@ -84,11 +85,15 @@ public class SubjectPojo {
         return sub_name;
     }
 
-    public String getType() {
-        return type;
+    public int getType() {
+        return category_id;
     }
 
     public int getStud_id() {
         return stud_id;
+    }
+
+    public String getCategory() {
+        return category;
     }
 }

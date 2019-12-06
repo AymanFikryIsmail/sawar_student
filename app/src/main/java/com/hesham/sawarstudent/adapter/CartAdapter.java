@@ -94,22 +94,8 @@ public class CartAdapter extends RecyclerView.Adapter<CartAdapter.MyViewHolder> 
         }
 
         public void bind(final PaperPojo paperPojo) {
-            String lectutre="Lecture";
-            if (paperPojo.getType().equals("l")){
-                lectutre="Lecture";
-            }else if (paperPojo.getType().equals("h")){
-                lectutre="Handouts";
+            String lectutre=paperPojo.getType();
 
-            }else if (paperPojo.getType().equals("s")){
-                lectutre="Sections";
-
-            }else if (paperPojo.getType().equals("c")){
-                lectutre="Courses";
-
-            }else if (paperPojo.getType().equals("r")){
-                lectutre="Revisions";
-
-            }
             papername.setText(paperPojo.getSubName()+"/"+lectutre+"/"+paperPojo.getName());
 //            papername.setText(paperPojo.getName());
             numofcpoies.setText("" + paperPojo.getNo());

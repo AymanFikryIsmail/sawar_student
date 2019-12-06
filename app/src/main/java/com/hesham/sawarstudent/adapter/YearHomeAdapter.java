@@ -11,9 +11,7 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hesham.sawarstudent.R;
-import com.hesham.sawarstudent.data.model.FacultyPojo;
 import com.hesham.sawarstudent.ui.subjects.SubjectFragment;
-import com.hesham.sawarstudent.ui.subjects.YearsFragment;
 
 import java.util.ArrayList;
 import java.util.List;

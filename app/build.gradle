@@ -23,6 +23,9 @@ android {
         // but continue the build even when errors are found:
         abortOnError false
     }
+    dataBinding {
+        enabled = true
+    }
 
 }
 
@@ -48,5 +51,8 @@ dependencies {
 
     //notification
     implementation 'com.google.firebase:firebase-messaging:20.0.0'
+
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.1.0'
+    annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.1.0'
 }
 apply plugin: 'com.google.gms.google-services'

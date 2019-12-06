@@ -15,6 +15,9 @@ public class CenterPojo {
     private int years;
     private String logo;
     private double rate;
+    private boolean notification_flag;
+
+
 
 
     public int getId() {
@@ -63,5 +66,13 @@ public class CenterPojo {
 
     public double getRate() {
         return rate;
+    }
+
+    public boolean getIsNotification_flag() {
+        return notification_flag;
+    }
+
+    public void setNotification_flag(boolean notification_flag) {
+        this.notification_flag = notification_flag;
     }
 }

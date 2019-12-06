@@ -73,6 +73,16 @@ public class PrefManager {
         editor.commit();
     }
 
+
+
+    public boolean getNotificaationFlag() {
+        return pref.getBoolean("notificaationFlag", false);
+    }
+
+    public void setNotificaationFlag(boolean notificaationFlag) {
+        editor.putBoolean("notificaationFlag", notificaationFlag);
+        editor.commit();
+    }
     public int getType() {
         return pref.getInt("type", 0);
     }

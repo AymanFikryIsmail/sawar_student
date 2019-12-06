@@ -4,6 +4,7 @@ package com.hesham.sawarstudent.networkmodule;
 import com.hesham.sawarstudent.data.model.AddOrderPojo;
 import com.hesham.sawarstudent.data.model.SubjectPojo;
 import com.hesham.sawarstudent.data.model.UserPojo;
+import com.hesham.sawarstudent.data.response.CategoryResponse;
 import com.hesham.sawarstudent.data.response.CenterResponse;
 import com.hesham.sawarstudent.data.response.CheckPromoResponse;
 import com.hesham.sawarstudent.data.response.CustomResponse;
@@ -53,7 +54,8 @@ public interface ApiRequest {
     @POST("student/home")
     Call<CenterResponse> getAllCenter(
             @Field("univ_id") int univ_id,
-            @Field("f_id") int f_id
+            @Field("f_id") int f_id,
+            @Field("stud_id") int stud_id
     );
 
 
@@ -73,8 +75,24 @@ public interface ApiRequest {
     Call<SubjectResponse> getFilteredSubjects(@Body SubjectPojo body);
     @POST("faculty/subjects/all")
     Call<SubjectResponse> getAllSubjects(@Body SubjectPojo body);
+
+
+    @GET("/faculty/category/get")
+    Call<CategoryResponse> getCategory(@Query("sub_id") int subId);
+
     @GET("faculty/paper/get/stud")
-    Call<PaperResponse> getPapers(@Query("type") String type, @Query("sub_id") int subId, @Query("stud_id") int stud_id);
+    Call<PaperResponse> getPapers(@Query("category_id") int category_id, @Query("sub_id") int subId, @Query("stud_id") int stud_id);
+
+
+    @FormUrlEncoded
+    @POST("/student/notification")
+    Call<CustomResponse> applyNotification(
+            @Field("cc_id") int cc_id ,
+            @Field("stud_id") int stud_id ,
+            @Field("f_id") int f_id ,
+            @Field("dep_id") Integer dep_id ,
+            @Field("year") int year);
+
 
     @FormUrlEncoded
     @POST("faculty/paper/manualmark")
@@ -155,7 +173,7 @@ public interface ApiRequest {
     Call<CustomResponse> addFavourite(
             @Field("stud_id") int stud_id,
             @Field("sub_id") int sub_id,
-            @Field("type") String type
+            @Field("category_id") int category_id
     );
 
     @FormUrlEncoded
@@ -163,7 +181,7 @@ public interface ApiRequest {
     Call<CustomResponse> removeFavourite(
             @Field("stud_id") int stud_id,
             @Field("sub_id") int sub_id,
-            @Field("type") String type
+            @Field("category_id") int category_id
     );
 
     @GET("student/favorite/get")

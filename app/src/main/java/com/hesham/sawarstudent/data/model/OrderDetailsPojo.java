@@ -26,8 +26,13 @@ public class OrderDetailsPojo {
     private int o_id;
     private double price;
 
-    @SerializedName("paper_type")
-    private String type;
+    private String category;
+    @SerializedName("paper_category")
+    private String paper_category;
+
+    private String year;
+    private String faculty;
+    private String department;
 
     public int getId() {
         return id;
@@ -65,7 +70,24 @@ public class OrderDetailsPojo {
         return price;
     }
 
-    public String getType() {
-        return type;
+
+    public String getCategory() {
+        return category;
+    }
+
+    public String getPaperCategory() {
+        return paper_category;
+    }
+
+    public String getYear() {
+        return year;
+    }
+
+    public String getFaculty() {
+        return faculty;
+    }
+
+    public String getDepartment() {
+        return department;
     }
 }

@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.engine.Resource;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
 import com.bumptech.glide.request.RequestOptions;
@@ -19,7 +18,6 @@ import com.hesham.sawarstudent.ui.favourite.FavouriteFragment;
 import com.hesham.sawarstudent.ui.login.LoginActivity;
 import com.hesham.sawarstudent.ui.order.OrderFragment;
 import com.hesham.sawarstudent.ui.student_data.ProfileActivity;
-import com.hesham.sawarstudent.ui.subjects.PaperFragment;
 import com.hesham.sawarstudent.utils.PrefManager;
 
 import androidx.annotation.NonNull;
@@ -124,6 +122,7 @@ public class HomeActivity extends AppCompatActivity
             @Override
             public void onFailure(Call<OrderResponse> call, Throwable t) {
                 Log.d("tag", "articles total result:: " + t.getMessage());
+
 
             }
         });

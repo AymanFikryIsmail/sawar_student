@@ -25,6 +25,7 @@ import com.hesham.sawarstudent.ui.home.HomeActivity;
 import com.hesham.sawarstudent.utils.PrefManager;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -62,27 +63,22 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // TODO(developer): Handle FCM messages here.
         // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
         Log.d(TAG, "From: " + remoteMessage.getFrom());
-       // sendNotification("hello");
+        // sendNotification("hello");
 
         // Check if message contains a data payload.
         if (remoteMessage.getData().size() > 0) {
             Log.d(TAG, "Message data payload: " + remoteMessage.getData());
+            Object data1 = remoteMessage.getData();
+            String title = ((Map) data1).get("title").toString();
+            String body = ((Map) data1).get("body").toString();
 
-            if (/* Check if data needs to be processed by long running job */ false) {
-                // For long-running tasks (10 seconds or more) use Firebase Job Dispatcher.
-                scheduleJob();
-            } else {
-                // Handle message within 10 seconds
                 handleNow();
-                sendNotification("" , "");
-            }
-
+                sendNotification(title, body);
         }
-
         // Check if message contains a notification payload.
         if (remoteMessage.getNotification() != null) {
             Log.d(TAG, "Message Notification Body: " + remoteMessage.getNotification().getBody());
-            sendNotification( remoteMessage.getNotification().getTitle(),remoteMessage.getNotification().getBody());
+            sendNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
 
         }
 
@@ -107,7 +103,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
-       // sendRegistrationToServer(token);
+        // sendRegistrationToServer(token);
     }
     // [END on_new_token]
 
@@ -141,7 +137,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      * @param token The new token.
      */
     private void sendRegistrationToServer(String token) {
-        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.pushNotificationToken(token , prefManager.getStudentData() ==null ?0:prefManager.getStudentData().getId());
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.pushNotificationToken(token, prefManager.getStudentData() == null ? 0 : prefManager.getStudentData().getId());
         call.enqueue(new Callback<CustomResponse>() {
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
@@ -165,10 +161,10 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
      *
      * @param messageBody FCM message body received.
      */
-    private void sendNotification(String title,String messageBody) {
+    private void sendNotification(String title, String messageBody) {
         Intent intent = new Intent(this, HomeActivity.class);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.putExtra("notification" , "notification");
+        intent.putExtra("notification", "notification");
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 /* Request code */, intent,
                 PendingIntent.FLAG_ONE_SHOT);
 
@@ -195,5 +191,13 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         }
 
         notificationManager.notify(0 /* ID of notification */, notificationBuilder.build());
+    }
+
+    class Msg {
+        String message;
+
+        public String getMessage() {
+            return message;
+        }
     }
 }

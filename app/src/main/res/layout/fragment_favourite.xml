@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data></data>
+    <RelativeLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.subjects.FirstTermFragment">
 
     <LinearLayout
@@ -30,18 +33,31 @@
 
         />
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/emptyLayout"
-        android:text="Nothing to show"
-        android:layout_gravity="center"
-        android:gravity="center"
-        android:visibility="gone"
 
-        />
     </LinearLayout>
-
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/emptyLayout"
+            android:orientation="vertical"
+            android:layout_gravity="center"
+            android:gravity="center"
+            android:layout_centerInParent="true"
+            >
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="Nothing to show"
+                />
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/refreshId"
+                android:layout_gravity="center"
+                android:src="@drawable/progress_indicators_circular"/>
+        </LinearLayout>
     <FrameLayout
         android:id="@+id/progress_view"
         android:layout_width="match_parent"
@@ -66,3 +82,5 @@
             android:indeterminateTint="@color/colorPrimary"/>
     </FrameLayout>
 </RelativeLayout>
+
+</layout>

@@ -31,7 +31,14 @@
             android:text="Subjects"
             android:textColor="@color/black"
             android:textSize="24sp"
-
+            />
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_gravity="center"
+            android:id="@+id/notificationBtnId"
+            android:layout_alignParentEnd="true"
+            android:layout_margin="15dp"
             />
     </RelativeLayout>
 

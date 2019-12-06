@@ -2,26 +2,16 @@ package com.hesham.sawarstudent.adapter;
 
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.Window;
-import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
-import android.widget.PopupMenu;
-import android.widget.RadioButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.appcompat.app.AlertDialog;
-import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hesham.sawarstudent.R;
@@ -45,7 +35,7 @@ public class PaperHomeAdapter extends RecyclerView.Adapter<PaperHomeAdapter.MyVi
     private EventListener listener;
     private Dialog dialog;
     private PrefManager prefManager;
-    private String paperType;
+    private int paperCategory;
     private ArrayList<PaperPojo> cartPapers;
     HashMap<Integer, PaperPojo> paperPojoHashMap;
 
@@ -53,11 +43,11 @@ public class PaperHomeAdapter extends RecyclerView.Adapter<PaperHomeAdapter.MyVi
         facultyPojos = new ArrayList<>();
     }
 
-    public PaperHomeAdapter(Context context, EventListener listener, List<PaperPojo> facultyPojos, String paperType) {
+    public PaperHomeAdapter(Context context, EventListener listener, List<PaperPojo> facultyPojos, int paperCategory) {
         this.context = context;
 //            prefManager=new PrefManager(context);
         this.facultyPojos = facultyPojos;
-        this.paperType = paperType;
+        this.paperCategory = paperCategory;
         prefManager = new PrefManager(context);
         paperPojoHashMap = prefManager.getCartPapers();
         if (paperPojoHashMap == null) {
@@ -259,7 +249,7 @@ public class PaperHomeAdapter extends RecyclerView.Adapter<PaperHomeAdapter.MyVi
 
     public void getPapers() {//prefManager.getCenterId()
         Call<PaperResponse> call = Apiservice.getInstance().apiRequest.
-                getPapers(paperType, prefManager.getSubjectId(), prefManager.getStudentData().getId());
+                getPapers(paperCategory, prefManager.getSubjectId(), prefManager.getStudentData().getId());
         call.enqueue(new Callback<PaperResponse>() {
             @Override
             public void onResponse(Call<PaperResponse> call, Response<PaperResponse> response) {

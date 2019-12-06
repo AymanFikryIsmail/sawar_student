@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="10dp">
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingEnd="15dp"
+        android:paddingStart="15dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/catId"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Lectures"
+            android:textColor="@color/grey1"
+            android:textSize="16sp" />
+
+
+        <View
+            android:layout_width="0dp"
+            android:id="@+id/categoryViewId"
+            android:layout_height="2dp"
+            android:layout_alignParentStart="true"
+            android:layout_alignEnd="@+id/catId"
+            android:layout_below="@+id/catId"
+            android:layout_marginTop="14dp"
+            android:visibility="invisible"
+            android:background="@color/colorPrimary" />
+    </RelativeLayout>
+
+    <ImageView
+        android:id="@+id/popupMenuTxt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:layout_centerInParent="true"
+        android:layout_alignParentEnd="true"
+        android:src="@drawable/icon_more_sharp"
+        android:background="@color/colorPrimary"
+        />
+</LinearLayout>

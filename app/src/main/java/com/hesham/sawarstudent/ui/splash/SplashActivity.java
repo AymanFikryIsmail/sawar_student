@@ -38,6 +38,8 @@ public class SplashActivity extends AppCompatActivity {
             }
         }, 1800);
         prefManager = new PrefManager(this);
+        //        Crashlytics.getInstance().crash(); // Force a crash
+
 // Get token
         // [START retrieve_current_token]
         FirebaseInstanceId.getInstance().getInstanceId()

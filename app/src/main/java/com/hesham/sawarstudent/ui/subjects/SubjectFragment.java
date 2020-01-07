@@ -44,6 +44,8 @@ public class SubjectFragment extends Fragment {
     private Integer depId;
     private CenterPojo centerPojo;
     private boolean isNotificationEnable;
+    private int notificationYear;
+    private Integer notificationDep;
 
     public SubjectFragment(int years) {
         this.years = years;
@@ -63,14 +65,10 @@ public class SubjectFragment extends Fragment {
         tabs = view.findViewById(R.id.tabs);
         sectionsPagerAdapter = new SubjectViewPager(getContext(), getChildFragmentManager(), years);
         viewPager.setAdapter(sectionsPagerAdapter);
+        viewPager.setCurrentItem(1);
         tabs.setupWithViewPager(viewPager);
         centerPojo = prefManager.getCenterData();
-        isNotificationEnable = centerPojo.getIsNotification_flag();
-        if (isNotificationEnable) {
-            notificationBtnId.setImageResource(R.drawable.choosed_bell);
-        } else {
-            notificationBtnId.setImageResource(R.drawable.bell);
-        }
+        checkNotification(centerPojo.getNotification_dep());
         notificationBtnId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,23 +85,35 @@ public class SubjectFragment extends Fragment {
         });
         return view;
     }
+    public void checkNotification(Integer notif_Dep ) {
+        depId=notif_Dep;
+        centerPojo = prefManager.getCenterData();
+        isNotificationEnable = centerPojo.getIsNotification_flag();
+        notificationDep=centerPojo.getNotification_dep();
+        notificationYear=centerPojo.getNotification_year();
 
+        if (isNotificationEnable&& notificationDep.equals(notif_Dep) &&notificationYear==years  ) {
+            notificationBtnId.setImageResource(R.drawable.choosed_bell);
+        } else {
+            notificationBtnId.setImageResource(R.drawable.bell);
+        }
+    }
 
     public void applyNotification() {//prefManager.getCenterId()
 
-        List<Fragment> fragments = getChildFragmentManager().getFragments();
-        if (fragments != null) {
-            for (Fragment fragment : fragments) {
-                if (fragment instanceof FirstTermFragment) {
-                    depId = ((FirstTermFragment) fragment).depId;
-                } else {
-                    depId = ((SecondTermFragment) fragment).depId;
-                }
-            }
-        }
+//        List<Fragment> fragments = getChildFragmentManager().getFragments();
+//        if (fragments != null) {
+//            for (Fragment fragment : fragments) {
+//                if (fragment instanceof FirstTermFragment) {
+//                    depId = ((FirstTermFragment) fragment).depId;
+//                } else {
+//                    depId = ((SecondTermFragment) fragment).depId;
+//                }
+//            }
+//        }
         Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
                 applyNotification(prefManager.getCenterId(), prefManager.getStudentData().getId()
-                        , prefManager.getFacultyId(), depId, years);
+                        , prefManager.getStudentData().getFacultyId(), depId, years);
         call.enqueue(new Callback<CustomResponse>() {
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
@@ -111,6 +121,9 @@ public class SubjectFragment extends Fragment {
                 if (response.body().status) {
                     isNotificationEnable=!isNotificationEnable;
                     centerPojo.setNotification_flag(isNotificationEnable);
+                    centerPojo.setNotification_year(years);
+                    centerPojo.setNotification_dep(depId);
+
                     prefManager.setCenterData(centerPojo);
                     notificationBtnId.setImageResource(R.drawable.choosed_bell);
 

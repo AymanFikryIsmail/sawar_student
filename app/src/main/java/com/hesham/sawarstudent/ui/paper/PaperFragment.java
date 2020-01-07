@@ -94,6 +94,7 @@ public class PaperFragment extends Fragment implements PaperHomeAdapter.EventLis
         binding.backarrowId.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 ((HomeActivity) getActivity()).onBackPressed();
             }
         });
@@ -276,4 +277,5 @@ public class PaperFragment extends Fragment implements PaperHomeAdapter.EventLis
         paperCategory = catId;
         getPapers();
     }
+
 }

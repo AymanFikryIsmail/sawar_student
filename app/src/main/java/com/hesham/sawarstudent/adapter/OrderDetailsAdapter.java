@@ -68,11 +68,9 @@ public class OrderDetailsAdapter extends RecyclerView.Adapter<OrderDetailsAdapte
 
             public void bind(final OrderDetailsPojo orderPojo) {
                 String lectutre=orderPojo.getPaperCategory();
-                String year=orderPojo.getYear();
-                String faculty=orderPojo.getFaculty();
-                String department=orderPojo.getDepartment();
 
-                ordername.setText(year +"/"+ faculty +"/"+ department +"/"+orderPojo.getSubject() +"/"+lectutre+"/" + orderPojo.getName());//                date.setText("date: "+orderPojo.getDate());
+
+                ordername.setText(orderPojo.getSubject() +"/"+lectutre+"/" + orderPojo.getName());//                date.setText("date: "+orderPojo.getDate());
 //
 //                date.setText("date: "+orderPojo.getDate());
 //                time.setText("Time: "+orderPojo.getDate());

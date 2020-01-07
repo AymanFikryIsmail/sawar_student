@@ -64,6 +64,7 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
     }
 
     private FragmentFirstTermBinding binding;
+    private SubjectFragment subjectFragment;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -77,12 +78,15 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
         prefManager = new PrefManager(getContext());
         facultyPojos = new ArrayList<>();
         depPojos = new ArrayList<>();
+        subjectFragment=(SubjectFragment) getParentFragment();
+
         binding.departmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 if (depPojos.size() != 0) {
                     depId = depPojos.get(i).getId();
                 }
+                subjectFragment.checkNotification(depId);
                 getFilteredSubjects();
             }
 
@@ -202,7 +206,7 @@ public class FirstTermFragment extends Fragment implements SubjectHomeAdapter.Ev
 
     public void getAllDepartments() {//prefManager.getCenterId()
         Call<DepartmentResponse> call = Apiservice.getInstance().apiRequest.
-                getAllDepartments(prefManager.getFacultyId());
+                getAllDepartments(prefManager.getStudentData().getFacultyId());
         binding.progressView.setVisibility(View.VISIBLE);
         call.enqueue(new Callback<DepartmentResponse>() {
             @Override

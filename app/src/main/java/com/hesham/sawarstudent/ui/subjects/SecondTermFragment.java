@@ -64,7 +64,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
 
     }
     private FragmentSecondTermBinding binding;
-
+    private SubjectFragment subjectFragment;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -75,6 +75,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
         binding.setLifecycleOwner(this);
         facultyPojos = new ArrayList<>();
         depPojos= new ArrayList<>();
+         subjectFragment=(SubjectFragment) getParentFragment();
 
         binding.departmentSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -82,6 +83,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                 if (depPojos.size() != 0) {
                     depId = depPojos.get(i).getId();
                 }
+                subjectFragment.checkNotification(depId);
                 getFilteredSubjects();
             }
 
@@ -129,7 +131,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
 
 
     public void getFilteredSubjects() {//prefManager.getCenterId()
-        SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getStudentData().getFacultyId(), years, 1, depId);
+        SubjectPojo subjectPojo = new SubjectPojo(prefManager.getCenterId(), prefManager.getStudentData().getFacultyId(), years, 2, depId);
         Call<SubjectResponse> call = Apiservice.getInstance().apiRequest.
                 getFilteredSubjects(subjectPojo);
         binding.progressView.setVisibility(View.VISIBLE);
@@ -146,7 +148,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
                     }else {
                         hideEmpty();
                     }
-                    facultySelectAdapter = new SubjectHomeAdapter(getContext(),SecondTermFragment.this, facultyPojos ,years, 1);
+                    facultySelectAdapter = new SubjectHomeAdapter(getContext(),SecondTermFragment.this, facultyPojos ,years, 2);
                     binding.termRecyclerView.setAdapter(facultySelectAdapter);
                 }
                 binding.progressView.setVisibility(View.GONE);
@@ -201,7 +203,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
 
     public void getAllDepartments() {//prefManager.getCenterId()
         Call<DepartmentResponse> call = Apiservice.getInstance().apiRequest.
-                getAllDepartments(prefManager.getFacultyId());
+                getAllDepartments(prefManager.getStudentData().getFacultyId());
         binding.progressView.setVisibility(View.VISIBLE);
         call.enqueue(new Callback<DepartmentResponse>() {
             @Override

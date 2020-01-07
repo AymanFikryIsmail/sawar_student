@@ -3,7 +3,6 @@ package com.hesham.sawarstudent.ui.order;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-import androidx.viewpager.widget.ViewPager;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -12,7 +11,6 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.android.material.tabs.TabLayout;
 import com.hesham.sawarstudent.R;
 import com.hesham.sawarstudent.adapter.OrderDetailsAdapter;
 import com.hesham.sawarstudent.data.model.OrderDetailsPojo;
@@ -31,7 +29,7 @@ import retrofit2.Response;
 public class OrderActivity extends AppCompatActivity {
 
 
-    private List<OrderDetailsPojo> facultyPojos;
+    private List<OrderDetailsPojo> orderDetailsPojos;
 
     private RecyclerView facultyRecyclerView;
     private OrderDetailsAdapter facultySelectAdapter;
@@ -45,6 +43,9 @@ public class OrderActivity extends AppCompatActivity {
     double total_Price = 0;
     double orderservice, ordertotal;
 
+
+    String year , faculty , department ;
+    TextView facultyTxt, yearTxt ,  departmentTxt ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -56,15 +57,18 @@ public class OrderActivity extends AppCompatActivity {
             ordertotal = getIntent().getDoubleExtra("ordertotal", 0);
             orderservice = getIntent().getDoubleExtra("orderservice", 0);
         }
+        facultyTxt= findViewById(R.id.faculty);
+        yearTxt= findViewById(R.id.year);
+        departmentTxt= findViewById(R.id.department);
 
-        facultyPojos = new ArrayList<>();
+        orderDetailsPojos = new ArrayList<>();
         initView();
         calculationId = findViewById(R.id.calculationId);
         emptyLayout = findViewById(R.id.emptyLayout);
         hideEmpty();
         RecyclerView.LayoutManager gridLayoutManager = new LinearLayoutManager(this);
         facultyRecyclerView.setLayoutManager(gridLayoutManager);
-        facultySelectAdapter = new OrderDetailsAdapter(this, facultyPojos);
+        facultySelectAdapter = new OrderDetailsAdapter(this, orderDetailsPojos);
         facultyRecyclerView.setAdapter(facultySelectAdapter);
 
         emptyLayout.setOnClickListener(new View.OnClickListener() {
@@ -107,8 +111,8 @@ public class OrderActivity extends AppCompatActivity {
 
     void calculateTotalPrice() {
         total_Price = 0;
-        for (int i = 0; i < facultyPojos.size(); i++) {
-            total_Price = total_Price + facultyPojos.get(i).getPrice() * facultyPojos.get(i).getNo();
+        for (int i = 0; i < orderDetailsPojos.size(); i++) {
+            total_Price = total_Price + orderDetailsPojos.get(i).getPrice() * orderDetailsPojos.get(i).getNo();
         }
         totalPrice.setText(total_Price + "");
         double service = calculateService();
@@ -123,9 +127,9 @@ public class OrderActivity extends AppCompatActivity {
         ArrayList<Integer> copyNum = new ArrayList<>();
         ArrayList<Integer> pageNum = new ArrayList<>();
         ;
-        for (int i = 0; i < facultyPojos.size(); i++) {
-            copyNum.add(facultyPojos.get(i).getNo());
-            pageNum.add(facultyPojos.get(i).getPage());
+        for (int i = 0; i < orderDetailsPojos.size(); i++) {
+            copyNum.add(orderDetailsPojos.get(i).getNo());
+            pageNum.add(orderDetailsPojos.get(i).getPage());
         }
         int x = 5;
         double sum = 0;
@@ -164,16 +168,57 @@ public class OrderActivity extends AppCompatActivity {
                 if (response.body() != null) {
                     if (response.body().status && response.body().data != null && response.body().data.size() != 0) {
                         Log.d("tag", "articles total result:: " + response.body().getMessage());
-                        facultyPojos.clear();
-                        facultyPojos.addAll(response.body().data);
+                        orderDetailsPojos.clear();
+                        orderDetailsPojos.addAll(response.body().data);
 //                    calculateTotalPrice();
 
-                        if (facultyPojos.size() == 0) {
+                        if (orderDetailsPojos.size() == 0) {
                             showEmpty();
                         } else {
                             hideEmpty();
+                            String year=orderDetailsPojos.get(0).getYear();
+                            List<String> yearList =new ArrayList<>();
+                            List<String> departmentList =new ArrayList<>();
+
+                            for(int i= 0 ; i<orderDetailsPojos.size() ; i++){
+                                if (!yearList.contains(orderDetailsPojos.get(i).getYear())){
+
+                                    if (orderDetailsPojos.get(i).getYear().equals("1")&&!yearList.contains("First year") ){
+                                        yearList.add("First year");
+
+                                    }else if(orderDetailsPojos.get(i).getYear().equals("2")&&!yearList.contains("Second year") ){
+                                        yearList.add("Second year");
+
+                                    }else if(orderDetailsPojos.get(i).getYear().equals("3")&&!yearList.contains("Third year") ){
+                                        yearList.add("Third year");
+
+                                    }else if(orderDetailsPojos.get(i).getYear().equals("4")&&!yearList.contains("Fourth year") ){
+                                        yearList.add("Fourth year");
+
+                                    }else if(orderDetailsPojos.get(i).getYear().equals("5")&&!yearList.contains("Fifth year") ){
+                                        yearList.add("Fifth year");
+
+                                    }else if(orderDetailsPojos.get(i).getYear().equals("6")&&!yearList.contains("Sixth year") ){
+                                        yearList.add("Sixth year");
+                                    }
+                                }
+                            }
+
+
+                            for(int i= 0 ; i<orderDetailsPojos.size() ; i++){
+                                if (!departmentList.contains(orderDetailsPojos.get(i).getDepartment())){
+                                    departmentList.add(orderDetailsPojos.get(i).getDepartment());
+                                }
+                            }
+
+
+                            String faculty=orderDetailsPojos.get(0).getFaculty();
+                            String department=orderDetailsPojos.get(0).getDepartment();
+                            facultyTxt.setText(faculty );
+                            departmentTxt.setText(departmentList.toString() );
+                            yearTxt.setText(yearList.toString() );
                         }
-                        facultySelectAdapter = new OrderDetailsAdapter(OrderActivity.this, facultyPojos);
+                        facultySelectAdapter = new OrderDetailsAdapter(OrderActivity.this, orderDetailsPojos);
                         facultyRecyclerView.setAdapter(facultySelectAdapter);
                     }
                 }

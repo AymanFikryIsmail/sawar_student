@@ -75,11 +75,11 @@ public class PrefManager {
 
 
 
-    public boolean getNotificaationFlag() {
-        return pref.getBoolean("notificaationFlag", false);
+    public boolean getNotificaationYearFlag() {
+        return pref.getBoolean("notificaationFlag", true);
     }
 
-    public void setNotificaationFlag(boolean notificaationFlag) {
+    public void setNotificaationYearFlag(boolean notificaationFlag) {
         editor.putBoolean("notificaationFlag", notificaationFlag);
         editor.commit();
     }

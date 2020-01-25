@@ -66,7 +66,7 @@ public class SecondTermFragment extends Fragment implements SubjectHomeAdapter.E
     private FragmentSecondTermBinding binding;
     private SubjectFragment subjectFragment;
 
-    
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {

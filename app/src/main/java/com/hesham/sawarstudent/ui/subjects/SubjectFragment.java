@@ -91,7 +91,8 @@ public class SubjectFragment extends Fragment {
         isNotificationEnable = centerPojo.getIsNotification_flag();
         notificationDep=centerPojo.getNotification_dep();
         notificationYear=centerPojo.getNotification_year();
-
+        if (notif_Dep==null)notif_Dep=0;
+        if (notificationDep==null)notificationDep=0;
         if (isNotificationEnable&& notificationDep.equals(notif_Dep) &&notificationYear==years  ) {
             notificationBtnId.setImageResource(R.drawable.choosed_bell);
         } else {

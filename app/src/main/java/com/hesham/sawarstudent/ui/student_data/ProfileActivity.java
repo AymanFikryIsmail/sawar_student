@@ -24,6 +24,8 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
@@ -32,8 +34,11 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.hesham.sawarstudent.R;
 import com.hesham.sawarstudent.adapter.CustomSpinnerAdapter;
+import com.hesham.sawarstudent.adapter.FacultySelectAdapter;
+import com.hesham.sawarstudent.data.model.DepartmentPojo;
 import com.hesham.sawarstudent.data.model.FacultyPojo;
 import com.hesham.sawarstudent.data.model.UserPojo;
+import com.hesham.sawarstudent.data.response.DepartmentResponse;
 import com.hesham.sawarstudent.data.response.FacultyResponse;
 import com.hesham.sawarstudent.data.response.ImageResponse;
 import com.hesham.sawarstudent.data.response.SignUpResponse;
@@ -56,7 +61,7 @@ import retrofit2.Response;
 
 import static com.hesham.sawarstudent.networkmodule.NetworkManager.BASE_URL;
 
-public class ProfileActivity extends AppCompatActivity implements OnRequestImageIntentListener {
+public class ProfileActivity extends AppCompatActivity implements OnRequestImageIntentListener,   FacultySelectAdapter.EventListener {
 
 
     private Spinner universitySpinner, facultySpinner;
@@ -82,10 +87,22 @@ public class ProfileActivity extends AppCompatActivity implements OnRequestImage
     List<String> univlist, facultyList;
     CustomSpinnerAdapter facultyCustomSpinnerAdapter, universityCustomSpinnerAdapter;
 
+    private List<DepartmentPojo> departmentsPojos , newDepartmentsPojos;
+    private RecyclerView departmentRecyclerView;
+    private FacultySelectAdapter departmentSelectAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+        ////////////////////////////////////////
+        departmentsPojos = new ArrayList<>();
+        newDepartmentsPojos = new ArrayList<>();
+        departmentRecyclerView = findViewById(R.id.departmentsRecyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        departmentRecyclerView.setLayoutManager(linearLayoutManager);
+        departmentSelectAdapter = new FacultySelectAdapter(this, this, departmentsPojos);
+        departmentRecyclerView.setAdapter(departmentSelectAdapter);
+        //////////////
         universityPojos = new ArrayList<>();
         facultyPojos = new ArrayList<>();
         univlist = new ArrayList<>();
@@ -265,6 +282,8 @@ public class ProfileActivity extends AppCompatActivity implements OnRequestImage
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 facultyId = i;
+                if (facultyId!=0)
+                    getAllDepartments( facultyPojos.get(facultyId-1).getId());
             }
 
             @Override
@@ -306,7 +325,7 @@ public class ProfileActivity extends AppCompatActivity implements OnRequestImage
             Toast.makeText(this, "please choose faculty ", Toast.LENGTH_LONG).show();
         } else {
             final UserPojo userPojo = new UserPojo(prefManager.getStudentData().getId(), nameEdit.getText().toString(), emailedit.getText().toString(), passwordedit.getText().toString(),
-                    universityPojos.get(universityId - 1).getId(), newFacultyPojos.get(facultyId - 1).getId() ,logo);
+                    universityPojos.get(universityId - 1).getId(), newFacultyPojos.get(facultyId - 1).getId() ,logo, departmetnID);
             progress_view.setVisibility(View.VISIBLE);
 
             Call<SignUpResponse> call = Apiservice.getInstance().apiRequest.
@@ -325,6 +344,7 @@ public class ProfileActivity extends AppCompatActivity implements OnRequestImage
                             Toast.makeText(ProfileActivity.this, response.message(), Toast.LENGTH_LONG).show();
                         }
                     }
+                    progress_view.setVisibility(View.GONE);
                 }
                 @Override
                 public void onFailure(Call<SignUpResponse> call, Throwable t) {
@@ -422,5 +442,40 @@ public class ProfileActivity extends AppCompatActivity implements OnRequestImage
 
     private boolean validatePassword(String password1) {
         return password1.length() > 7;
+    }
+
+
+    public void getAllDepartments(int facID) {//prefManager.getCenterId()
+        Call<DepartmentResponse> call = Apiservice.getInstance().apiRequest.
+                getAllDepartments(facID);
+        call.enqueue(new Callback<DepartmentResponse>() {
+            @Override
+            public void onResponse(Call<DepartmentResponse> call, Response<DepartmentResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().status && response.body().cc_id != null) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        departmentsPojos.clear();
+                        departmentsPojos.addAll(response.body().cc_id);
+                        departmentSelectAdapter.updateList(departmentsPojos);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<DepartmentResponse> call, Throwable t) {
+                Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(ProfileActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+
+            }
+        });
+    }
+    ArrayList<Integer> departmetnID = new ArrayList<>();
+
+    @Override
+    public void onChange(int facultyId, boolean check) {
+        if (check) {
+            departmetnID.add(facultyId);
+        } else {
+            departmetnID.remove((Integer) facultyId);
+        }
     }
 }

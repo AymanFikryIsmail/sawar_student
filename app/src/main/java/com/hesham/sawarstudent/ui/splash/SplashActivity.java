@@ -4,9 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,7 +36,7 @@ public class SplashActivity extends AppCompatActivity {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                openActivity();
+                checkAppUpdates();
             }
         }, 1800);
         prefManager = new PrefManager(this);
@@ -93,5 +95,33 @@ public class SplashActivity extends AppCompatActivity {
             startActivity(i);
             finish();
         }
+    }
+
+
+    public void checkAppUpdates() {//prefManager.getCenterId()
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.
+                checkAppUpdates();
+        call.enqueue(new Callback<CustomResponse>() {
+            @Override
+            public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
+                if (response.body() !=null &&response.body().status ) {//response.body().status  &&
+                    double val= (double) response.body().data;
+                    if (val==0){
+                        openActivity();
+                    }else {
+                        Intent viewIntent =
+                                new Intent("android.intent.action.VIEW",
+                                        Uri.parse("https://play.google.com/store/apps/details?id=com.hesham.sawarstudent"));
+                        startActivity(viewIntent);
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CustomResponse> call, Throwable t) {
+                Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(SplashActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 }

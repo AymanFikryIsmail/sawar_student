@@ -3,9 +3,10 @@ package com.hesham.sawarstudent.ui.signup;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.Manifest;
-import android.app.TimePickerDialog;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -16,42 +17,37 @@ import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
-import android.widget.TimePicker;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.hesham.sawarstudent.R;
 import com.hesham.sawarstudent.adapter.CustomSpinnerAdapter;
+import com.hesham.sawarstudent.adapter.FacultySelectAdapter;
+import com.hesham.sawarstudent.data.model.DepartmentPojo;
 import com.hesham.sawarstudent.data.model.FacultyPojo;
 import com.hesham.sawarstudent.data.model.UserPojo;
+import com.hesham.sawarstudent.data.response.DepartmentResponse;
 import com.hesham.sawarstudent.data.response.FacultyResponse;
 import com.hesham.sawarstudent.data.response.ImageResponse;
 import com.hesham.sawarstudent.data.response.SignUpResponse;
-import com.hesham.sawarstudent.data.response.UserResponse;
 import com.hesham.sawarstudent.networkmodule.Apiservice;
 import com.hesham.sawarstudent.networkmodule.NetworkUtilities;
-import com.hesham.sawarstudent.ui.home.HomeActivity;
 import com.hesham.sawarstudent.ui.login.LoginActivity;
 import com.hesham.sawarstudent.utils.AddImageUtilities;
 import com.hesham.sawarstudent.utils.OnRequestImageIntentListener;
 import com.hesham.sawarstudent.utils.PrefManager;
 
 import java.io.File;
-import java.sql.Time;
-import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import okhttp3.MediaType;
@@ -60,7 +56,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SignUpActivity extends AppCompatActivity implements OnRequestImageIntentListener {
+public class SignUpActivity extends AppCompatActivity implements OnRequestImageIntentListener,   FacultySelectAdapter.EventListener{
 
 
     private Spinner universitySpinner, facultySpinner;
@@ -83,10 +79,24 @@ public class SignUpActivity extends AppCompatActivity implements OnRequestImageI
     CustomSpinnerAdapter facultyCustomSpinnerAdapter ,  universityCustomSpinnerAdapter;
     private boolean isPasswordVisible;
     ImageView eyeId;
+
+    private List<DepartmentPojo> departmentsPojos , newDepartmentsPojos;
+    private RecyclerView departmentRecyclerView;
+    private FacultySelectAdapter departmentSelectAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+
+        ////////////////////////////////////////
+        departmentsPojos = new ArrayList<>();
+        newDepartmentsPojos = new ArrayList<>();
+        departmentRecyclerView = findViewById(R.id.departmentsRecyclerView);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
+        departmentRecyclerView.setLayoutManager(linearLayoutManager);
+        departmentSelectAdapter = new FacultySelectAdapter(this, this, departmentsPojos);
+        departmentRecyclerView.setAdapter(departmentSelectAdapter);
+        //////////////
         universityPojos = new ArrayList<>();
         facultyPojos = new ArrayList<>();
         allFacultyPojos = new ArrayList<>();
@@ -255,6 +265,8 @@ public class SignUpActivity extends AppCompatActivity implements OnRequestImageI
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 facultyId = i;
+                if (facultyId!=0)
+                    getAllDepartments( facultyPojos.get(facultyId-1).getId());
             }
 
             @Override
@@ -301,7 +313,7 @@ public class SignUpActivity extends AppCompatActivity implements OnRequestImageI
         }
         else {
             final UserPojo userPojo = new UserPojo(nameEdit.getText().toString(), emailedit.getText().toString(), passwordedit.getText().toString(),
-                    gender, universityPojos.get(universityId-1).getId(), facultyPojos.get(facultyId-1).getId(), logo , prefManager.getNotificationToken());
+                    gender, universityPojos.get(universityId-1).getId(), facultyPojos.get(facultyId-1).getId(), logo , prefManager.getNotificationToken(), departmetnID);
             progress_view.setVisibility(View.VISIBLE);
 
             Call<SignUpResponse> call = Apiservice.getInstance().apiRequest.
@@ -435,4 +447,39 @@ public class SignUpActivity extends AppCompatActivity implements OnRequestImageI
             return isValidPhone;
 
         }
+
+
+    public void getAllDepartments(int facID) {//prefManager.getCenterId()
+        Call<DepartmentResponse> call = Apiservice.getInstance().apiRequest.
+                getAllDepartments(facID);
+        call.enqueue(new Callback<DepartmentResponse>() {
+            @Override
+            public void onResponse(Call<DepartmentResponse> call, Response<DepartmentResponse> response) {
+                if (response.body() != null) {
+                    if (response.body().status && response.body().cc_id != null) {
+                        Log.d("tag", "articles total result:: " + response.body().getMessage());
+                        departmentsPojos.clear();
+                        departmentsPojos.addAll(response.body().cc_id);
+                        departmentSelectAdapter.updateList(departmentsPojos);
+                    }
+                }
+            }
+            @Override
+            public void onFailure(Call<DepartmentResponse> call, Throwable t) {
+                Log.d("tag", "articles total result:: " + t.getMessage());
+                Toast.makeText(SignUpActivity.this, "Something went wrong , please try again", Toast.LENGTH_LONG).show();
+
+            }
+        });
     }
+    ArrayList<Integer> departmetnID = new ArrayList<>();
+
+    @Override
+    public void onChange(int facultyId, boolean check) {
+        if (check) {
+            departmetnID.add(facultyId);
+        } else {
+            departmetnID.remove((Integer) facultyId);
+        }
+    }
+}

@@ -103,7 +103,14 @@
                 android:background="@drawable/signup_shape_edit"
                 android:padding="22dp" />
 
-
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/departmentsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp"
+                />
 
             <Button
                 android:layout_width="wrap_content"

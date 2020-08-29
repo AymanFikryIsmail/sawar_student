@@ -8,7 +8,7 @@
     android:orientation="vertical"
     tools:context=".ui.signup.SignUpActivity">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -131,7 +131,14 @@
                 android:background="@drawable/signup_shape_edit"
                 android:padding="22dp" />
 
-
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/departmentsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/signup_shape_edit"
+                android:padding="12dp"
+                />
             <Button
                 android:id="@+id/nextBtn"
                 android:layout_width="wrap_content"
@@ -145,8 +152,9 @@
                 android:textAllCaps="false"
                 android:textColor="@color/white"
                 android:textSize="20sp" />
+
         </LinearLayout>
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 
     <FrameLayout
         android:id="@+id/progress_view"

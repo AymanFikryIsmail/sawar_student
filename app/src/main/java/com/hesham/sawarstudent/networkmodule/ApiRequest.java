@@ -188,6 +188,9 @@ public interface ApiRequest {
     Call<SubjectResponse> getFavourite(@Query("stud_id") int stud_id);
 
 
+    @GET("student/AppUpdates")
+    Call<CustomResponse> checkAppUpdates();
+
 }
 
 

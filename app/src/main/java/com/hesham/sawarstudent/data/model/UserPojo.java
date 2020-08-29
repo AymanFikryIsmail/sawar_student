@@ -5,6 +5,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.io.Serializable;
 import java.sql.Time;
+import java.util.ArrayList;
 import java.util.Date;
 
 public class UserPojo implements Serializable {
@@ -22,6 +23,7 @@ public class UserPojo implements Serializable {
     private String photo;
     private int points;
     private String token;
+    private ArrayList<Integer> departments;
 
     public UserPojo() {
     }
@@ -31,7 +33,8 @@ public class UserPojo implements Serializable {
         this.password = password;
     }
 
-    public UserPojo(String name, String email, String password, String gender, int univ, int facultyId, String photo , String token) {
+    public UserPojo(String name, String email, String password, String gender,
+                    int univ, int facultyId, String photo , String token,  ArrayList<Integer> departments) {
         this.name = name;
         this.email = email;
         this.password = password;
@@ -40,11 +43,12 @@ public class UserPojo implements Serializable {
         this.facultyId = facultyId;
         this.photo = photo;
         this.token = token;
+        this.departments = departments;
     }
 
     // for update
 
-    public UserPojo(int stud_id, String name, String email, String password, int univ, int facultyId,  String photo) {
+    public UserPojo(int stud_id, String name, String email, String password, int univ, int facultyId,  String photo,  ArrayList<Integer> departments) {
         this.id = stud_id;
         this.stud_id = stud_id;
         this.name = name;
@@ -53,6 +57,7 @@ public class UserPojo implements Serializable {
         this.univ = univ;
         this.facultyId = facultyId;
         this.photo = photo;
+        this.departments = departments;
 
     }
 

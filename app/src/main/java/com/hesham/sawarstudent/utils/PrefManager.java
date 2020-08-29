@@ -239,4 +239,14 @@ public class PrefManager {
         editor.apply();
     }
 
+
+    public boolean getIsRateApp() {
+        return pref.getBoolean("RateApp", false);
+    }
+
+    public void setIsRateApp(boolean RateApp) {
+        editor.putBoolean("RateApp", RateApp);
+        editor.commit();
+    }
+
 }

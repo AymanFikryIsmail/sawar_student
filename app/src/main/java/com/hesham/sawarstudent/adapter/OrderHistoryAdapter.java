@@ -5,6 +5,7 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,16 +56,17 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
     public RatingBar ratingBar;
     RatingDialog mRatingDialog;
     private float rateValue;
+
     public OrderHistoryAdapter() {
         facultyPojos = new ArrayList<>();
     }
 
-    public OrderHistoryAdapter(Context context, List<OrderPojo> facultyPojos ,  EventListener listener) {
+    public OrderHistoryAdapter(Context context, List<OrderPojo> facultyPojos, EventListener listener) {
         this.context = context;
 //            prefManager=new PrefManager(context);
         this.facultyPojos = facultyPojos;
         this.prefManager = new PrefManager(context);
- this.listener=listener;
+        this.listener = listener;
     }
 
     @NonNull
@@ -82,9 +84,9 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
     @Override
     public int getItemCount() {
-        if (facultyPojos.size()==0){
+        if (facultyPojos.size() == 0) {
             prefManager.setOrderCenterId(0);
-        }else {
+        } else {
             prefManager.setOrderCenterId(1);
         }
         return facultyPojos.size();
@@ -120,7 +122,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 //            time.setText(orderPojo.getDate());
 
             Date date = new Date(orderPojo.getLongDate());
-           String pm=convertTime(orderPojo.getFormattedDate());
+            String pm = convertTime(orderPojo.getFormattedDate());
             SimpleDateFormat df2 = new SimpleDateFormat("hh:mm");
             String dateText = df2.format(date);
             time.setText(pm);
@@ -156,6 +158,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             });
         }
     }
+
     @SuppressLint("SimpleDateFormat")
     private String convertTime(String time) {
         String processingTime = "";
@@ -180,8 +183,10 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
     public interface EventListener {
         void onRemove(List<OrderPojo> orderPojo);
-        void onReceive( );
-        void onResend( );
+
+        void onReceive();
+
+        void onResend();
     }
 
     public void checkStatus(OrderPojo orderPojo) {//prefManager.getCenterId()
@@ -222,10 +227,9 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         Button cancelorder = dialog.findViewById(R.id.cancelorder);
         final TextView statusText = dialog.findViewById(R.id.statusText);
 
-         if (orderPojo.getDelay_hours()!=0 && orderPojo.getReady()==0 &&checkDelayDateIfExceed(orderPojo.getDelay_hours(),  orderPojo.getDelay_date())){
-                 showDelayProblemDialog(orderPojo);
-        }
-        else if (orderPojo.getCancel_cc() == 1 && orderPojo.getRecieve()==1) {
+        if (orderPojo.getDelay_hours() != 0 && orderPojo.getReady() == 0 && checkDelayDateIfExceed(orderPojo.getDelay_hours(), orderPojo.getDelay_date())) {
+            showDelayProblemDialog(orderPojo);
+        } else if (orderPojo.getCancel_cc() == 1 && orderPojo.getRecieve() == 1) {
             resendOrder.setVisibility(View.GONE);
             removeOrder.setVisibility(View.GONE);
             dialog.show();
@@ -253,9 +257,9 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             @Override
             public void onClick(View v) {
 //                receiveOrder(orderPojo , 4);
-                if (orderPojo.getReady()==0){
+                if (orderPojo.getReady() == 0) {
                     Toast.makeText(context, "The order hasn't been ready yet", Toast.LENGTH_LONG).show();
-                }else {
+                } else {
                     initRateDialog(orderPojo);
                     rate();
                     dialog.dismiss();
@@ -267,7 +271,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             @Override
             public void onClick(View v) {
 //                resendOrder(orderPojo);
-                    checkProblem(orderPojo);
+                checkProblem(orderPojo);
                 dialog.dismiss();
             }
         });
@@ -310,9 +314,10 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         }
         return false;
     }
-    boolean checkDelayDateIfExceed( long numofHours, long dt ) {
 
-        long after = dt + 60*60*1000*numofHours;
+    boolean checkDelayDateIfExceed(long numofHours, long dt) {
+
+        long after = dt + 60 * 60 * 1000 * numofHours;
         long today = 0;
         try {
             Calendar c = Calendar.getInstance();
@@ -330,22 +335,27 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         }
         return false;
     }
-    public void receiveOrder(final  OrderPojo orderPojo , int rate , String comment) {//prefManager.getCenterId()
-        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.recieveRateOrder(orderPojo.getId(),prefManager.getStudentData().getId() , rate ,comment);
+
+    public void receiveOrder(final OrderPojo orderPojo, int rate, String comment) {//prefManager.getCenterId()
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.recieveRateOrder(orderPojo.getId(), prefManager.getStudentData().getId(), rate, comment);
         call.enqueue(new Callback<CustomResponse>() {
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
                 if (response.body() != null) {
                     if (response.body().status) {
                         Log.d("tag", "articles total result:: ");
-                    facultyPojos.remove(orderPojo);
-                    listener.onRemove(facultyPojos);
-                    listener.onReceive();
-                    int orderNum = prefManager.getOrderNumber();
-                    prefManager.setOrderNumber(--orderNum);
-                    notifyDataSetChanged();
+                        facultyPojos.remove(orderPojo);
+                        listener.onRemove(facultyPojos);
+                        listener.onReceive();
+                        int orderNum = prefManager.getOrderNumber();
+                        prefManager.setOrderNumber(--orderNum);
+                        notifyDataSetChanged();
+                        boolean isRated = prefManager.getIsRateApp();
+                        if (!isRated) {
+                            rateApp();
+                        }
+                    }
                 }
-            }
             }
 
 
@@ -364,13 +374,14 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
                 if (response.body() != null) {
                     if (response.body().status) {
                         Log.d("tag", "articles total result:: ");
-                    facultyPojos.remove(orderPojo);
-                    listener.onRemove(facultyPojos);
-                    int orderNum = prefManager.getOrderNumber();
-                    prefManager.setOrderNumber(--orderNum);
-                    notifyDataSetChanged();
+                        facultyPojos.remove(orderPojo);
+                        listener.onRemove(facultyPojos);
+                        int orderNum = prefManager.getOrderNumber();
+                        prefManager.setOrderNumber(--orderNum);
+                        notifyDataSetChanged();
+                    }
                 }
-            }                    }
+            }
 
 
             @Override
@@ -380,7 +391,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         });
     }
 
-    public void cancelOrder(final OrderPojo orderPojo , String comment) {//prefManager.getCenterId()
+    public void cancelOrder(final OrderPojo orderPojo, String comment) {//prefManager.getCenterId()
         Call<CustomResponse> call = Apiservice.getInstance().apiRequest.cancelOrder(orderPojo.getId(), comment);
         call.enqueue(new Callback<CustomResponse>() {
             @Override
@@ -407,21 +418,22 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
 
 
     public void resendOrder(final OrderPojo orderPojo) {//prefManager.getCenterId()
-        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.resendOrder(orderPojo.getId() , orderPojo.getCc_id());
+        Call<CustomResponse> call = Apiservice.getInstance().apiRequest.resendOrder(orderPojo.getId(), orderPojo.getCc_id());
         call.enqueue(new Callback<CustomResponse>() {
             @Override
             public void onResponse(Call<CustomResponse> call, Response<CustomResponse> response) {
-                if (response.body()!=null) {
-                    if (response.body().status){
-                    Log.d("tag", "articles total result:: ");
-                    facultyPojos.remove(orderPojo);
+                if (response.body() != null) {
+                    if (response.body().status) {
+                        Log.d("tag", "articles total result:: ");
+                        facultyPojos.remove(orderPojo);
 //                    listener.onRemove(facultyPojos);
-                    listener.onResend();
+                        listener.onResend();
 //                    int orderNum = prefManager.getOrderNumber();
 //                    prefManager.setOrderNumber(--orderNum);
-                    notifyDataSetChanged();
+                        notifyDataSetChanged();
+
+                    }
                 }
-            }
             }
 
 
@@ -433,8 +445,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
     }
 
 
-
-    public void initRateDialog(final OrderPojo orderPojo){
+    public void initRateDialog(final OrderPojo orderPojo) {
         mRatingDialog = new RatingDialog(context);
         mRatingDialog.setDefaultRating((int) orderPojo.getRate());
         mRatingDialog.setEnable(true);
@@ -446,11 +457,11 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             }
 
             @Override
-            public void onSubmit(float rating , String commentTxt) {
+            public void onSubmit(float rating, String commentTxt) {
                 Log.v("RATELISTERNER", "onSubmit " + rating);
                 rateValue = rating;
                 mRatingDialog.setDefaultRating((int) rating);
-                receiveOrder(orderPojo , (int) rateValue , commentTxt);
+                receiveOrder(orderPojo, (int) rateValue, commentTxt);
 
             }
 
@@ -466,7 +477,8 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
     public void rate() {
         mRatingDialog.showDialog();
     }
-    void showDelayProblemDialog(final OrderPojo orderPojo ) {
+
+    void showDelayProblemDialog(final OrderPojo orderPojo) {
         final Dialog dialog = new Dialog(context);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -478,7 +490,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         SimpleDateFormat df2 = new SimpleDateFormat("hh:mm:ss");
         String dateText = df2.format(date);
         hoursTxt.setText("We are sorry for the inconvenience. There's a problem with the center's printers. We're working to fix it within "
-                +orderPojo.getDelay_hours() + " hours since " + dateText);
+                + orderPojo.getDelay_hours() + " hours since " + dateText);
 //        hoursTxt.setText(orderPojo.getDelay_hours() + " hours since " + dateText);
         // if button is clicked, close the custom dialog
         dialogButton.setText("Wait");
@@ -502,13 +514,14 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         dialog.show();
 
     }
-    void showCancelDialog(final OrderPojo orderPojo ) {
+
+    void showCancelDialog(final OrderPojo orderPojo) {
         final Dialog dialog = new Dialog(context);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         dialog.setContentView(R.layout.dialog_cancel);
         Button cancelButton = dialog.findViewById(R.id.cancelOrder);
-       final  TextView commentTxt = dialog.findViewById(R.id.comment);
+        final TextView commentTxt = dialog.findViewById(R.id.comment);
 
 
         cancelButton.setOnClickListener(new View.OnClickListener() {
@@ -520,14 +533,15 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         cancelButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    cancelOrder(orderPojo , commentTxt.getText().toString());
-                    dialog.dismiss();
+                cancelOrder(orderPojo, commentTxt.getText().toString());
+                dialog.dismiss();
             }
         });
 
         dialog.show();
 
     }
+
     void checkProblem(final OrderPojo orderPojo) {
         Call<DelayResponse> call = Apiservice.getInstance().apiRequest.
                 checkProblem(prefManager.getCenterId());
@@ -555,7 +569,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
     }
 
 
-    void showDelayDialog(int hours, long delay , final OrderPojo orderPojo) {
+    void showDelayDialog(int hours, long delay, final OrderPojo orderPojo) {
         final Dialog dialog = new Dialog(context);
         dialog.getWindow().setBackgroundDrawableResource(android.R.color.transparent);
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -566,7 +580,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         Date date = new Date(delay);
         SimpleDateFormat df2 = new SimpleDateFormat("hh:mm:ss");
         String dateText = df2.format(date);
-        hoursTxt.setText("We are sorry for the inconvenience. There's a problem with the center's printers. We're working to fix it within "+hours + " hours since " + dateText);
+        hoursTxt.setText("We are sorry for the inconvenience. There's a problem with the center's printers. We're working to fix it within " + hours + " hours since " + dateText);
         // if button is clicked, close the custom dialog
         dialogButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -593,7 +607,7 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
             public void onResponse(Call<WaitingResponse> call, Response<WaitingResponse> response) {
                 if (response.body() != null) {
                     if (response.body().status) {
-                        confirmOrder(response.body().data.getOrders() , orderPojo);
+                        confirmOrder(response.body().data.getOrders(), orderPojo);
                     }
                 }
             }
@@ -606,8 +620,8 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
         });
     }
 
-    void confirmOrder(int waiting , final OrderPojo orderPojo) {
-        new AlertDialog.Builder(context,  R.style.AlertDialogCustom)
+    void confirmOrder(int waiting, final OrderPojo orderPojo) {
+        new AlertDialog.Builder(context, R.style.AlertDialogCustom)
                 .setMessage("Once you have confirmed you have to receive the order within 24 hours \n waiting: " + waiting)
                 .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
@@ -619,5 +633,25 @@ public class OrderHistoryAdapter extends RecyclerView.Adapter<OrderHistoryAdapte
                 .show();
 
     }
+
+    void rateApp() {
+        new AlertDialog.Builder(context, R.style.AlertDialogCustom)
+                .setTitle("Rate App")
+                .setMessage("")
+                .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        prefManager.setIsRateApp(true);
+                        Intent viewIntent =
+                                new Intent("android.intent.action.VIEW",
+                                        Uri.parse("https://play.google.com/store/apps/details?id=com.hesham.sawarstudent"));
+                        context.startActivity(viewIntent);
+                    }
+                })
+                // A null listener allows the button to dismiss the dialog and take no further action.
+                .setNegativeButton(android.R.string.no, null)
+                .show();
+
+    }
+
 }
 
